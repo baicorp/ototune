@@ -1,5 +1,5 @@
-import { useState } from "react";
 import { Link } from "react-router";
+import CollapsibleText from "./CollapsibleText";
 
 interface LibraryHeaderProps {
   thumbnail: string;
@@ -38,20 +38,8 @@ export default function LibraryHeader({
               {artist.name}
             </Link>
           ))}
-        <Description description={description} />
+        <CollapsibleText>{description}</CollapsibleText>
       </div>
     </div>
-  );
-}
-
-function Description({ description }: { description: string }) {
-  const [isExpand, setIsExpand] = useState(false);
-  return (
-    <p
-      className={`mt-4 text-neutral-500 ${isExpand ? "" : "line-clamp-3"}`}
-      onClick={() => setIsExpand((prev) => !prev)}
-    >
-      {description}
-    </p>
   );
 }

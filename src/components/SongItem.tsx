@@ -1,19 +1,16 @@
+import { Track } from "../types";
+import { Link } from "react-router";
 import explicitIco from "../assets/explicit.svg";
 
-interface SongItemType {
-  id: string;
-  title: string;
-  artist: string;
-  thumbnail?: string;
+type SongItemType = Track & {
   index?: string;
-  duration: string;
   explicit?: boolean;
-}
+};
 
 export default function SongItem({
   id,
   title,
-  artist,
+  artists,
   thumbnail,
   index,
   duration,
@@ -21,7 +18,7 @@ export default function SongItem({
 }: SongItemType) {
   return (
     <div className="w-full flex items-center gap-2 cursor-pointer">
-      <div className="w-12 aspect-square">
+      <div className="w-12 shrink-0 aspect-square">
         {thumbnail && (
           <img
             src={thumbnail}
@@ -35,10 +32,18 @@ export default function SongItem({
         )}
       </div>
       <div>
-        <p className="font-semibold">{title}</p>
+        <p className="font-semibold leading-tight">{title}</p>
         <div className="flex items-center gap-2">
           {explicit && <img src={explicitIco} className="w-5" />}
-          <p className="text-neutral-500">{artist}</p>
+          {artists.map((artist) => (
+            <Link
+              key={artist.browseId}
+              to={`/artist/${artist.browseId}`}
+              className="cursor-pointer text-neutral-500"
+            >
+              {artist.name}
+            </Link>
+          ))}
         </div>
       </div>
       <div className="ml-auto mr-2">

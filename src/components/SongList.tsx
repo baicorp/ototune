@@ -1,3 +1,4 @@
+import { Track } from "../types";
 import SongItem from "./SongItem";
 
 export default function SongList({
@@ -5,16 +6,7 @@ export default function SongList({
   variant,
 }: {
   variant: "playlist" | "album";
-  tracks: {
-    videoId: string;
-    title: string;
-    artists: ({
-      name: string;
-      browseId: string;
-    } | null)[];
-    thumbnail: string[];
-    duration: string;
-  }[];
+  tracks: Track[];
 }) {
   return (
     <div className="flex flex-col gap-2">
@@ -22,11 +14,11 @@ export default function SongList({
         <SongItem
           key={index}
           title={track.title}
-          thumbnail={variant === "playlist" ? track.thumbnail[0] : undefined}
+          thumbnail={variant === "playlist" ? track.thumbnail : undefined}
           index={variant === "album" ? (index + 1).toString() : undefined}
-          artist={track.artists[0]?.name || "null babe"}
+          artists={track.artists}
           duration={track.duration}
-          id={track.videoId}
+          id={track.id}
         />
       ))}
     </div>
