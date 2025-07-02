@@ -131,6 +131,36 @@ async fn get_playlist(browse_id: String) -> Result<serde_json::Value, String> {
 }
 
 #[tauri::command]
+async fn get_artist(browse_id: String) -> Result<serde_json::Value, String> {
+    let client = reqwest::Client::new();
+    let headers = build_headers();
+
+    let body = serde_json::json!({
+        "browseId": browse_id,
+        "context": {
+            "client": {
+                "clientName": "WEB_REMIX",
+                "clientVersion": "1.20220918"
+            }
+        },
+        "racyCheckOk": true,
+        "contentCheckOk": true
+    });
+
+    let res = client
+        .post(yt_url("browse"))
+        .headers(headers)
+        .json(&body)
+        .send()
+        .await
+        .map_err(|e| e.to_string())?;
+
+    res.json::<serde_json::Value>()
+        .await
+        .map_err(|e| e.to_string())
+}
+
+#[tauri::command]
 fn get_audio_url(video_id: String) -> Result<String, String> {
     println!("cwd = {:?}", env::current_dir());
     let output = Command::new("../python/.venv/bin/python")
@@ -154,6 +184,7 @@ pub fn run() {
             search,
             get_album,
             get_playlist,
+            get_artist,
             get_audio_url
         ])
         .run(tauri::generate_context!())
