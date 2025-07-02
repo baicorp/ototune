@@ -14,7 +14,7 @@ export default function ArtistItem({
   thumbnail,
 }: ArtistItemProps) {
   return (
-    <Link to={`/artist/${id}`}>
+    <Link to={`/artist/${id}`} reloadDocument>
       <div>
         <div className="w-34 flex flex-col items-center gap-2">
           <img src={thumbnail} className="w-34 rounded-full" />
