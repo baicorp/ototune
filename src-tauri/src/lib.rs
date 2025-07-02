@@ -1,14 +1,161 @@
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
+#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+use reqwest::header::{
+    HeaderMap, HeaderValue, ACCEPT, ACCEPT_ENCODING, ACCEPT_LANGUAGE, CONTENT_TYPE, HOST, ORIGIN,
+    REFERER, USER_AGENT,
+};
+use serde_json::json;
+use std::env;
+use std::process::Command;
+
+fn build_headers() -> HeaderMap {
+    let mut headers = HeaderMap::new();
+    headers.insert(HOST, HeaderValue::from_static("music.youtube.com"));
+    headers.insert(CONTENT_TYPE, HeaderValue::from_static("application/json"));
+    headers.insert(
+        USER_AGENT,
+        HeaderValue::from_static("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36 Edg/105.0.1343.42"),
+    );
+    headers.insert(ACCEPT, HeaderValue::from_static("*/*"));
+    headers.insert(
+        ORIGIN,
+        HeaderValue::from_static("https://music.youtube.com"),
+    );
+    headers.insert(
+        REFERER,
+        HeaderValue::from_static("https://music.youtube.com/"),
+    );
+    headers.insert(ACCEPT_ENCODING, HeaderValue::from_static("gzip, deflate"));
+    headers.insert(
+        ACCEPT_LANGUAGE,
+        HeaderValue::from_static("de,de-DE;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6"),
+    );
+    headers
+}
+
+fn yt_url(endpoint: &str) -> String {
+    format!(
+        "https://music.youtube.com/youtubei/v1/{}?key=AIzaSyC9XL3ZjWddXya6X74dJoCTL-WEYFDNX30",
+        endpoint
+    )
+}
+
 #[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
+async fn search(query: String) -> Result<serde_json::Value, String> {
+    let client = reqwest::Client::new();
+    let headers = build_headers();
+
+    let body = json!({
+        "query": query,
+        "context": {
+            "client": {
+                "clientName": "WEB_REMIX",
+                "clientVersion": "1.20220918"
+            }
+        },
+        "racyCheckOk": true,
+        "contentCheckOk": true
+    });
+
+    let res = client
+        .post(yt_url("search"))
+        .headers(headers)
+        .json(&body)
+        .send()
+        .await
+        .map_err(|e| e.to_string())?;
+
+    res.json::<serde_json::Value>()
+        .await
+        .map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+async fn get_album(browse_id: String) -> Result<serde_json::Value, String> {
+    let client = reqwest::Client::new();
+    let headers = build_headers();
+
+    let body = json!({
+        "browseId": browse_id,
+        "context": {
+            "client": {
+                "clientName": "WEB_REMIX",
+                "clientVersion": "1.20220918"
+            }
+        },
+        "racyCheckOk": true,
+        "contentCheckOk": true
+    });
+
+    let res = client
+        .post(yt_url("browse"))
+        .headers(headers)
+        .json(&body)
+        .send()
+        .await
+        .map_err(|e| e.to_string())?;
+
+    res.json::<serde_json::Value>()
+        .await
+        .map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+async fn get_playlist(browse_id: String) -> Result<serde_json::Value, String> {
+    let client = reqwest::Client::new();
+    let headers = build_headers();
+
+    let body = json!({
+        "browseId": browse_id,
+        "context": {
+            "client": {
+                "clientName": "WEB_REMIX",
+                "clientVersion": "1.20220918"
+            }
+        },
+        "racyCheckOk": true,
+        "contentCheckOk": true
+    });
+
+    let res = client
+        .post(yt_url("browse"))
+        .headers(headers)
+        .json(&body)
+        .send()
+        .await
+        .map_err(|e| e.to_string())?;
+
+    res.json::<serde_json::Value>()
+        .await
+        .map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+fn get_audio_url(video_id: String) -> Result<String, String> {
+    println!("cwd = {:?}", env::current_dir());
+    let output = Command::new("../python/.venv/bin/python")
+        .arg("../python/ytmusic.py")
+        .arg(&video_id)
+        .output()
+        .map_err(|e| format!("Failed to run Python script: {}", e))?;
+
+    if output.status.success() {
+        Ok(String::from_utf8_lossy(&output.stdout).trim().to_string())
+    } else {
+        Err(String::from_utf8_lossy(&output.stderr).trim().to_string())
+    }
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![greet])
+        .invoke_handler(tauri::generate_handler![
+            search,
+            get_album,
+            get_playlist,
+            get_audio_url
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
