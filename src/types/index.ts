@@ -3,18 +3,14 @@ export interface Track {
   title: string;
   artists: { name: string; browseId: string }[];
   thumbnail?: string;
-  duration: string;
+  duration: string | null;
 }
 
 export interface MixContent {
   headerTitle: string;
-  contents: {
-    id: string;
-    title: string;
-    subtitle: string;
-    thumbnail: string;
-    artists: { name: string; browseId: string }[];
-    duration: string | null;
-    type: string;
-  }[];
+  contents: Track &
+    {
+      subtitle: string;
+      type: string;
+    }[];
 }
