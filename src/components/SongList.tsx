@@ -5,7 +5,7 @@ export default function SongList({
   tracks,
   variant,
 }: {
-  variant: "playlist" | "album";
+  variant: "playlist" | "album" | "queue";
   tracks: Track[];
 }) {
   return (
@@ -14,10 +14,14 @@ export default function SongList({
         <SongItem
           key={index}
           title={track.title}
-          thumbnail={variant === "playlist" ? track.thumbnail : undefined}
+          thumbnail={
+            variant === "playlist" || variant === "queue"
+              ? track.thumbnail
+              : undefined
+          }
           index={variant === "album" ? (index + 1).toString() : undefined}
           artists={track.artists}
-          duration={track.duration}
+          duration={variant === "queue" ? null : track.duration}
           id={track.id}
         />
       ))}
