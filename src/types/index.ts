@@ -4,6 +4,7 @@ export interface Track {
   artists: { name: string; browseId: string }[];
   thumbnail?: string;
   duration: string | null;
+  listId: string | null;
 }
 
 export interface MixContent {

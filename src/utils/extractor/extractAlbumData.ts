@@ -46,7 +46,8 @@ export default function extractAlbumData(albumDataObject: any): AlbumData {
     tracks: contents?.map((data: any) => {
       const dataItem = data?.musicResponsiveListItemRenderer;
       return {
-        id: dataItem?.playlistItemData?.videoId,
+        id: dataItem?.flexColumns[0]?.musicResponsiveListItemFlexColumnRenderer
+          ?.text?.runs[0]?.navigationEndpoint?.watchEndpoint?.videoId,
         title:
           dataItem?.flexColumns[0]?.musicResponsiveListItemFlexColumnRenderer
             ?.text?.runs[0]?.text,
@@ -70,6 +71,9 @@ export default function extractAlbumData(albumDataObject: any): AlbumData {
         duration:
           dataItem?.fixedColumns[0]?.musicResponsiveListItemFixedColumnRenderer
             ?.text?.runs[0]?.text,
+        listId:
+          dataItem?.flexColumns[0]?.musicResponsiveListItemFlexColumnRenderer
+            ?.text?.runs[0]?.navigationEndpoint?.watchEndpoint?.playlistId,
       };
     }),
   };

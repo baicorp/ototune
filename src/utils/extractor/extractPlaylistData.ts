@@ -40,7 +40,8 @@ export default function extractPlaylistData(playlistObject: any): PlaylistData {
     tracks: contents?.map((data: any) => {
       const dataItem = data?.musicResponsiveListItemRenderer;
       return {
-        id: dataItem?.playlistItemData?.videoId,
+        id: dataItem?.flexColumns[0]?.musicResponsiveListItemFlexColumnRenderer
+          ?.text?.runs[0]?.navigationEndpoint?.watchEndpoint?.videoId,
         title:
           dataItem?.flexColumns[0]?.musicResponsiveListItemFlexColumnRenderer
             ?.text?.runs[0]?.text,
@@ -71,6 +72,9 @@ export default function extractPlaylistData(playlistObject: any): PlaylistData {
         duration:
           dataItem?.fixedColumns[0]?.musicResponsiveListItemFixedColumnRenderer
             ?.text?.runs[0]?.text,
+        listId:
+          dataItem?.flexColumns[0]?.musicResponsiveListItemFlexColumnRenderer
+            ?.text?.runs[0]?.navigationEndpoint?.watchEndpoint?.playlistId,
       };
     }),
   };

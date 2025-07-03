@@ -53,6 +53,7 @@ export default function extractSearchData(searchDataObject: any): MixContent[] {
                     return run?.text;
                   })
                   ?.filter((data: any) => data !== undefined)[0] || null,
+              listId: null,
               type: contentType(
                 content?.musicCardShelfRenderer?.title?.runs[0]
                   ?.navigationEndpoint?.watchEndpoint?.videoId ||
@@ -131,17 +132,9 @@ export default function extractSearchData(searchDataObject: any): MixContent[] {
                   ?.flat(100)
                   ?.filter(Boolean),
                 duration:
-                  content?.musicResponsiveListItemRenderer?.flexColumns
-                    ?.map((flexColumn: any) =>
-                      flexColumn.musicResponsiveListItemFlexColumnRenderer?.text?.runs?.map(
-                        (run: any) => {
-                          if (!timeRegex.test(run?.text)) return undefined;
-                          return run?.text;
-                        },
-                      ),
-                    )
-                    ?.flat(100)
-                    ?.filter((data: any) => data !== undefined)[0] || null,
+                  subtitle.filter((data: any) => timeRegex.test(data))[0] ||
+                  null,
+                listId: null,
                 type: contentType(
                   content?.musicResponsiveListItemRenderer?.overlay
                     ?.musicItemThumbnailOverlayRenderer?.content

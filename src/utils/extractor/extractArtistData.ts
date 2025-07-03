@@ -64,10 +64,9 @@ export default function extractArtistData(channelObject: any): ArtistData {
               headerTitle: data?.musicShelfRenderer?.title?.runs[0]?.text,
               contents: data?.musicShelfRenderer?.contents?.map((data: any) => {
                 return {
-                  id: data?.musicResponsiveListItemRenderer?.overlay
-                    ?.musicItemThumbnailOverlayRenderer?.content
-                    ?.musicPlayButtonRenderer?.playNavigationEndpoint
-                    ?.watchEndpoint?.videoId,
+                  id: data?.musicResponsiveListItemRenderer?.flexColumns[0]
+                    ?.musicResponsiveListItemFlexColumnRenderer?.text?.runs[0]
+                    ?.navigationEndpoint?.watchEndpoint?.videoId,
                   title:
                     data?.musicResponsiveListItemRenderer?.flexColumns[0]
                       ?.musicResponsiveListItemFlexColumnRenderer?.text?.runs[0]
@@ -106,11 +105,14 @@ export default function extractArtistData(channelObject: any): ArtistData {
                     ?.flat(100)
                     ?.filter(Boolean),
                   duration: null,
+                  listId:
+                    data?.musicResponsiveListItemRenderer?.flexColumns[0]
+                      ?.musicResponsiveListItemFlexColumnRenderer?.text?.runs[0]
+                      ?.navigationEndpoint?.watchEndpoint?.playlistId,
                   type: contentType(
-                    data?.musicResponsiveListItemRenderer?.overlay
-                      ?.musicItemThumbnailOverlayRenderer?.content
-                      ?.musicPlayButtonRenderer?.playNavigationEndpoint
-                      ?.watchEndpoint?.videoId,
+                    data?.musicResponsiveListItemRenderer?.flexColumns[0]
+                      ?.musicResponsiveListItemFlexColumnRenderer?.text?.runs[0]
+                      ?.navigationEndpoint?.watchEndpoint?.videoId,
                   ),
                 };
               }),
@@ -157,6 +159,9 @@ export default function extractArtistData(channelObject: any): ArtistData {
                       .flat(100)
                       ?.filter(Boolean),
                     duration: null,
+                    listId:
+                      data?.musicTwoRowItemRenderer?.navigationEndpoint
+                        ?.watchEndpoint?.playlistId || null,
                     type: contentType(
                       data?.musicTwoRowItemRenderer?.navigationEndpoint
                         ?.browseEndpoint?.browseId ||
