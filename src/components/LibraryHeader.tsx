@@ -22,12 +22,14 @@ export default function LibraryHeader({
   return (
     <div className="flex gap-4 cursor-default">
       <div className="basis-5/12 min-w-32 max-w-72 shrink-0">
-        <img src={thumbnail} className="w-full" />
+        <img src={thumbnail} className="w-full rounded-md" />
       </div>
-      <div className="py-4">
+      <div className="py-4 flex flex-col gap-2">
         <h1 className="font-bold text-2xl mb-3">{title}</h1>
-        <p className="text-neutral-500">{subtitle}</p>
-        <p className="text-neutral-500">{stat}</p>
+        <div>
+          <p className="text-neutral-500">{subtitle}</p>
+          <p className="text-neutral-500">{stat}</p>
+        </div>
         {artists &&
           artists.map((artist) => (
             <Link
