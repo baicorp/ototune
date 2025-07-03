@@ -32,23 +32,25 @@ export default function SongItem({
         )}
       </div>
       <div>
-        <p className="font-semibold leading-tight">{title}</p>
+        <p className="font-semibold leading-tight line-clamp-1">{title}</p>
         <div className="flex items-center gap-2">
           {explicit && <img src={explicitIco} className="w-5" />}
           {artists.map((artist) => (
             <Link
               key={artist.browseId}
               to={`/artist/${artist.browseId}`}
-              className="cursor-pointer text-neutral-500"
+              className="cursor-pointer text-neutral-500 text-nowrap line-clamp-1"
             >
               {artist.name}
             </Link>
           ))}
         </div>
       </div>
-      <div className="ml-auto mr-2">
-        <p className="text-neutral-500 font-mono">{duration}</p>
-      </div>
+      {duration && (
+        <div className="ml-auto mr-2">
+          <p className="text-neutral-500 font-mono">{duration}</p>
+        </div>
+      )}
     </div>
   );
 }
