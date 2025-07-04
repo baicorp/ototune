@@ -168,9 +168,11 @@ async fn get_queue_list(
     let client = reqwest::Client::new();
     let headers = build_headers();
 
+    let final_playlist_id = playlist_id.unwrap_or_else(|| format!("RDAMVM{}", video_id));
+
     let body = serde_json::json!({
         "videoId": video_id,
-        "playlistId": playlist_id,
+        "playlistId": final_playlist_id,
         "context": {
             "client": {
                 "clientName": "WEB_REMIX",

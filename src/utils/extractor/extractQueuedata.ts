@@ -29,7 +29,7 @@ export default function extractQueueData(queueData: any): Track[] {
           next?.thumbnail?.thumbnails[1]?.url ||
           next?.thumbnail?.thumbnails[0]?.url,
         duration: next?.lengthText?.runs[0]?.text,
-        listId: next?.navigationEndpoint?.watchEndpoint?.playlistId,
+        listId: next?.navigationEndpoint?.watchEndpoint?.playlistId || null,
       };
     })
     .filter((track: Track) => track?.id && track.title);
