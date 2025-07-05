@@ -15,7 +15,7 @@
           "sidecar": true,
           "args": [
             "-f",
-            "bestaudio",
+            "bestaudio[ext=m4a]",
             "-g",
             {
               "validator": "https://www\\.youtube\\.com/watch\\?v=\\S+"

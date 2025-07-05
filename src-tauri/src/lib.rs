@@ -207,7 +207,7 @@ async fn get_audio_url(app: tauri::AppHandle, video_id: String) -> String {
         app.shell()
             .sidecar("yt-dlp")
             .unwrap()
-            .args(["-f", "bestaudio", "-g", &video_url]);
+            .args(["-f", "bestaudio[ext=m4a]", "-g", &video_url]);
 
     let (mut rx, _child) = sidecar_command.spawn().unwrap();
 
