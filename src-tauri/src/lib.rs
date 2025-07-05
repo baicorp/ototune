@@ -6,7 +6,7 @@ use reqwest::header::{
 };
 use serde_json::json;
 use std::env;
-use std::process::Command;
+use tauri_plugin_shell::{process::CommandEvent, ShellExt};
 
 fn build_headers() -> HeaderMap {
     let mut headers = HeaderMap::new();
@@ -197,24 +197,35 @@ async fn get_queue_list(
 }
 
 #[tauri::command]
-fn get_audio_url(video_id: String) -> Result<String, String> {
-    println!("cwd = {:?}", env::current_dir());
-    let output = Command::new("../python/.venv/bin/python")
-        .arg("../python/ytmusic.py")
-        .arg(&video_id)
-        .output()
-        .map_err(|e| format!("Failed to run Python script: {}", e))?;
+async fn get_audio_url(app: tauri::AppHandle, video_id: String) -> String {
+    let video_url = format!(
+        "https://www.youtube.com/watch?v={}",
+        video_id.trim().to_string()
+    );
 
-    if output.status.success() {
-        Ok(String::from_utf8_lossy(&output.stdout).trim().to_string())
-    } else {
-        Err(String::from_utf8_lossy(&output.stderr).trim().to_string())
+    let sidecar_command =
+        app.shell()
+            .sidecar("yt-dlp")
+            .unwrap()
+            .args(["-f", "bestaudio", "-g", &video_url]);
+
+    let (mut rx, _child) = sidecar_command.spawn().unwrap();
+
+    let mut result = String::new();
+
+    while let Some(event) = rx.recv().await {
+        if let CommandEvent::Stdout(line) = event {
+            result.push_str(&String::from_utf8_lossy(&line));
+        }
     }
+
+    result.trim().to_string()
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
             search,

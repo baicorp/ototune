@@ -22,6 +22,13 @@ tauri = { version = "2", features = [] }
 tauri-plugin-opener = "2"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
-reqwest = { version = "0.12.22", features = ["json", "gzip", "deflate", "brotli", "cookies", "rustls-tls"] }
+reqwest = { version = "0.12.22", features = [
+    "json",
+    "gzip",
+    "deflate",
+    "brotli",
+    "cookies",
+    "rustls-tls",
+] }
 tokio = { version = "1.45.1", features = ["full"] }
-
+tauri-plugin-shell = "2"

@@ -5,6 +5,25 @@
   "windows": ["main"],
   "permissions": [
     "core:default",
-    "opener:default"
+    "opener:default",
+    "shell:default",
+    {
+      "identifier": "shell:allow-execute",
+      "allow": [
+        {
+          "name": "binaries/yt-dlp",
+          "sidecar": true,
+          "args": [
+            "-f",
+            "bestaudio",
+            "-g",
+            {
+              "validator": "https://www\\.youtube\\.com/watch\\?v=\\S+"
+            }
+          ]
+        }
+      ]
+    },
+    "shell:allow-open"
   ]
 }
