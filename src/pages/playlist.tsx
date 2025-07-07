@@ -23,7 +23,7 @@ export default function Playlist() {
       setIsLoad(false);
     }
     getPlaylist(id);
-  }, []);
+  }, [id]);
 
   if (isLoad) return <p>Loading...</p>;
 

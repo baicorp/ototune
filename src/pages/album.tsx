@@ -23,7 +23,7 @@ export default function Album() {
       setIsLoad(false);
     }
     getAlbum(id);
-  }, []);
+  }, [id]);
 
   if (isLoad) return <p>Loading...</p>;
 
