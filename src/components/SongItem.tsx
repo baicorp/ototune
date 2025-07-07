@@ -1,5 +1,6 @@
 import { Track } from "../types";
 import { Link } from "react-router";
+import usePlayer from "../hooks/usePlayer";
 import explicitIco from "../assets/explicit.svg";
 
 type SongItemType = Track & {
@@ -15,9 +16,26 @@ export default function SongItem({
   index,
   duration,
   explicit,
+  listId,
 }: SongItemType) {
+  const { setCurrentTrack } = usePlayer();
+
+  function handleClick() {
+    setCurrentTrack({
+      id,
+      title,
+      thumbnail,
+      artists,
+      duration,
+      listId,
+    });
+  }
+
   return (
-    <div className="w-full flex items-center gap-2 cursor-pointer">
+    <div
+      className="w-full flex items-center gap-2 cursor-pointer"
+      onClick={handleClick}
+    >
       <div className="w-12 shrink-0 aspect-square">
         {thumbnail && (
           <img
@@ -39,7 +57,8 @@ export default function SongItem({
             <Link
               key={artist.browseId}
               to={`/artist/${artist.browseId}`}
-              className="cursor-pointer text-neutral-500 text-nowrap line-clamp-1"
+              onClick={(e) => e.stopPropagation()}
+              className="cursor-pointer text-neutral-500 text-nowrap text-sm line-clamp-1"
             >
               {artist.name}
             </Link>
