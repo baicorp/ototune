@@ -1,4 +1,5 @@
 import { Outlet } from "react-router";
+import TopPanel from "../components/RootLayout/TopPanel";
 import LeftPanel from "../components/RootLayout/LeftPanel";
 import RightPanel from "../components/RootLayout/RightPanel";
 import MusicPlayerBar from "../components/Player/MusicPlayerBar";
@@ -6,6 +7,9 @@ import MusicPlayerBar from "../components/Player/MusicPlayerBar";
 export default function Layout() {
   return (
     <div className="flex flex-col h-dvh">
+      <section className="border-b border-neutral-300 flex justify-center">
+        <TopPanel />
+      </section>
       <section className="relative flex grow h-full overflow-hidden">
         <LeftPanel />
         <main className="basis-1/2 grow overflow-y-auto">
