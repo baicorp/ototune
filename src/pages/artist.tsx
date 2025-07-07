@@ -24,7 +24,7 @@ export default function Artist() {
       setIsLoad(false);
     }
     getAlbum(id);
-  }, []);
+  }, [id]);
 
   if (isLoad) return <p>Loading...</p>;
 
