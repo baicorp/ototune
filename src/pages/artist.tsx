@@ -58,7 +58,7 @@ export default function Artist() {
           return (
             <section key={index} className="p-4">
               <p className="font-semibold text-xl mb-2">{data.headerTitle}</p>
-              <CategoryListLayout category={data.headerTitle}>
+              <CategoryListLayout category={data.contents[0].type}>
                 {data.contents.map((content, index) => {
                   return (
                     <DynamicComponent

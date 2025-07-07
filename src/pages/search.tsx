@@ -48,7 +48,7 @@ export default function Search() {
               >
                 {data.headerTitle}
               </p>
-              <CategoryListLayout category={data.headerTitle}>
+              <CategoryListLayout category={data.contents[0].type}>
                 {data.contents.map((content, index) => {
                   return (
                     <DynamicComponent
