@@ -41,6 +41,65 @@ fn yt_url(endpoint: &str) -> String {
 }
 
 #[tauri::command]
+async fn get_home() -> Result<serde_json::Value, String> {
+    let client = reqwest::Client::new();
+    let headers = build_headers();
+
+    let base_payload = serde_json::json!({
+        "context": {
+            "client": {
+                "clientName": "WEB_REMIX",
+                "clientVersion": "1.20220918"
+            }
+        },
+        "racyCheckOk": true,
+        "contentCheckOk": true
+    });
+
+    let local_payload = {
+        let mut p = base_payload.clone();
+        p["browseId"] = serde_json::json!("FEmusic_charts");
+        p
+    };
+
+    let global_payload = {
+        let mut p = base_payload.clone();
+        p["browseId"] = serde_json::json!("FEmusic_charts");
+        p["formData"] = serde_json::json!({ "selectedValues": ["ZZ"] });
+        p
+    };
+
+    let req_local = client
+        .post(yt_url("browse"))
+        .headers(headers.clone())
+        .json(&local_payload);
+
+    let req_global = client
+        .post(yt_url("browse"))
+        .headers(headers)
+        .json(&global_payload);
+
+    let (res_local, res_global) = tokio::join!(req_local.send(), req_global.send());
+
+    let data_local = res_local
+        .map_err(|e| e.to_string())?
+        .json::<serde_json::Value>()
+        .await
+        .map_err(|e| e.to_string())?;
+
+    let data_global = res_global
+        .map_err(|e| e.to_string())?
+        .json::<serde_json::Value>()
+        .await
+        .map_err(|e| e.to_string())?;
+
+    Ok(serde_json::json!({
+        "local": data_local,
+        "global": data_global
+    }))
+}
+
+#[tauri::command]
 async fn search(query: String) -> Result<serde_json::Value, String> {
     let client = reqwest::Client::new();
     let headers = build_headers();
@@ -233,6 +292,7 @@ pub fn run() {
             get_playlist,
             get_artist,
             get_queue_list,
+            get_home,
             get_audio_url
         ])
         .run(tauri::generate_context!())

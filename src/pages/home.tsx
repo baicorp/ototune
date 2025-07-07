@@ -1,52 +1,71 @@
 import { toast } from "sonner";
-import { FormEvent, useState } from "react";
+import { MixContent } from "../types";
+import { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import PageWrapper from "../components/PageWrapper";
+import DynamicComponent from "../components/DynamicComp";
+import extractHomeData from "../utils/extractor/extractHomeData";
+import CategoryListLayout from "../components/CategoryListLayout";
 
 export default function Home() {
-  const [songUrl, setSongUrl] = useState("");
+  const [homeData, setHomeData] = useState<MixContent[]>([]);
   const [isLoad, setIsLoad] = useState(false);
 
-  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const data = new FormData(e.currentTarget);
-    const videoId = data.get("video-id");
-    if (!videoId) return;
-    try {
-      setIsLoad(true);
-      const url = await invoke<string>("get_audio_url", { videoId });
-      setIsLoad(false);
-      setSongUrl(url);
-    } catch (err) {
-      setIsLoad(false);
-      toast.error("Failed to fetch audio" + err);
+  useEffect(() => {
+    async function getHomeData() {
+      try {
+        setIsLoad(true);
+        let { local, global } = await invoke<any>("get_home");
+        local = extractHomeData(local);
+        global = extractHomeData(global);
+        const homeData = [
+          {
+            headerTitle: "Local " + local[0].headerTitle,
+            contents: local[0].contents,
+          },
+          {
+            headerTitle: "Global " + global[0].headerTitle,
+            contents: global[0].contents,
+          },
+        ];
+        setHomeData(homeData);
+        setIsLoad(false);
+      } catch (e: any) {
+        setIsLoad(false);
+        toast.error("failed to fetch search data");
+      }
     }
-  }
+    getHomeData();
+  }, []);
 
   return (
     <PageWrapper>
-      <form onSubmit={(e) => handleSubmit(e)} className="mb-4 flex gap-2">
-        <input
-          type="text"
-          name="video-id"
-          placeholder="Enter a youtube music video id"
-          className="grow outline outline-neutral-400 px-3 py-1.5 rounded-md"
-        />
-        <button className="px-3 py-1.5 rounded-md text-center bg-black text-white">
-          Get Song Url
-        </button>
-      </form>
       {isLoad ? (
         <p>Loading...</p>
       ) : (
-        songUrl && (
-          <textarea
-            value={songUrl}
-            readOnly
-            rows={20}
-            className="w-full p-4 outline outline-neutraloutline-neutral-400 rounded-md "
-          />
-        )
+        homeData &&
+        homeData.map((data, index) => {
+          return (
+            <section key={index}>
+              <p
+                className={`font-semibold text-xl ${index !== 0 && "mt-4"} mb-2`}
+              >
+                {data.headerTitle}
+              </p>
+              <CategoryListLayout category={data.contents[0].type}>
+                {data.contents.map((content, index) => {
+                  return (
+                    <DynamicComponent
+                      key={index}
+                      type={content.type}
+                      props={content}
+                    />
+                  );
+                })}
+              </CategoryListLayout>
+            </section>
+          );
+        })
       )}
     </PageWrapper>
   );
