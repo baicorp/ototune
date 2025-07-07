@@ -12,7 +12,7 @@ export default function RightPanel() {
     >
       {trackQueue.length !== 0 ? (
         <>
-          <p className="px-2 py-1 border-b border-neutral-300 lg:px-6 lg:py-4 font-semibold sticky top-0 bg-white">
+          <p className="px-2 py-1 border-b border-neutral-300 lg:px-6 lg:py-4 font-semibold sticky top-0 bg-white z-10">
             Queue
           </p>
           <div className="px-2 py-2 lg:px-6 lg:py-4">

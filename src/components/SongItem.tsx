@@ -18,7 +18,7 @@ export default function SongItem({
   explicit,
   listId,
 }: SongItemType) {
-  const { setCurrentTrack } = usePlayer();
+  const { setCurrentTrack, currentTrack } = usePlayer();
 
   function handleClick() {
     setCurrentTrack({
@@ -36,16 +36,168 @@ export default function SongItem({
       className="w-full flex items-center gap-2 cursor-pointer"
       onClick={handleClick}
     >
-      <div className="w-12 shrink-0 aspect-square">
+      <div className="w-12 shrink-0 aspect-square relative rounded-sm overflow-hidden bg-black">
         {thumbnail && (
           <img
             src={thumbnail}
-            className="w-full aspect-square object-contain object-center rounded-sm"
+            className="w-full aspect-square object-contain object-center"
           />
         )}
         {index && (
           <div className="h-full flex justify-center items-center font-semibold">
             {index}
+          </div>
+        )}
+        {currentTrack?.id === id && (
+          <div className="absolute bg-white/60 inset-0">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <rect x="2" y="8" width="1.5" height="8" fill="#000" rx="0.75">
+                <animate
+                  attributeName="height"
+                  values="8;16;8"
+                  dur="0.9s"
+                  repeatCount="indefinite"
+                />
+                <animate
+                  attributeName="y"
+                  values="8;4;8"
+                  dur="0.9s"
+                  repeatCount="indefinite"
+                />
+              </rect>
+
+              <rect
+                x="5"
+                y="6"
+                width="1.5"
+                height="12"
+                fill="#000000"
+                rx="0.75"
+              >
+                <animate
+                  attributeName="height"
+                  values="12;20;12"
+                  dur="0.8s"
+                  repeatCount="indefinite"
+                />
+                <animate
+                  attributeName="y"
+                  values="6;2;6"
+                  dur="0.8s"
+                  repeatCount="indefinite"
+                />
+              </rect>
+
+              <rect
+                x="8"
+                y="4"
+                width="1.5"
+                height="16"
+                fill="#000000"
+                rx="0.75"
+              >
+                <animate
+                  attributeName="height"
+                  values="16;8;16"
+                  dur="0.7s"
+                  repeatCount="indefinite"
+                />
+                <animate
+                  attributeName="y"
+                  values="4;8;4"
+                  dur="0.7s"
+                  repeatCount="indefinite"
+                />
+              </rect>
+
+              <rect
+                x="11"
+                y="7"
+                width="1.5"
+                height="10"
+                fill="#000000"
+                rx="0.75"
+              >
+                <animate
+                  attributeName="height"
+                  values="10;18;10"
+                  dur="1.1s"
+                  repeatCount="indefinite"
+                />
+                <animate
+                  attributeName="y"
+                  values="7;3;7"
+                  dur="1.1s"
+                  repeatCount="indefinite"
+                />
+              </rect>
+
+              <rect
+                x="14"
+                y="5"
+                width="1.5"
+                height="14"
+                fill="#000000"
+                rx="0.75"
+              >
+                <animate
+                  attributeName="height"
+                  values="14;6;14"
+                  dur="0.6s"
+                  repeatCount="indefinite"
+                />
+                <animate
+                  attributeName="y"
+                  values="5;9;5"
+                  dur="0.6s"
+                  repeatCount="indefinite"
+                />
+              </rect>
+
+              <rect
+                x="17"
+                y="9"
+                width="1.5"
+                height="6"
+                fill="#000000"
+                rx="0.75"
+              >
+                <animate
+                  attributeName="height"
+                  values="6;14;6"
+                  dur="0.9s"
+                  repeatCount="indefinite"
+                />
+                <animate
+                  attributeName="y"
+                  values="9;5;9"
+                  dur="0.9s"
+                  repeatCount="indefinite"
+                />
+              </rect>
+
+              <rect
+                x="20"
+                y="8"
+                width="1.5"
+                height="8"
+                fill="#000000"
+                rx="0.75"
+              >
+                <animate
+                  attributeName="height"
+                  values="8;12;8"
+                  dur="0.8s"
+                  repeatCount="indefinite"
+                />
+                <animate
+                  attributeName="y"
+                  values="8;6;8"
+                  dur="0.8s"
+                  repeatCount="indefinite"
+                />
+              </rect>
+            </svg>
           </div>
         )}
       </div>
