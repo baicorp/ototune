@@ -40,6 +40,7 @@ export default function SongItem({
         {thumbnail && (
           <img
             src={thumbnail}
+            loading="lazy"
             className="w-full aspect-square object-contain object-center"
           />
         )}

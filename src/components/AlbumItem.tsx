@@ -28,6 +28,7 @@ export default function AlbumItem({
         >
           <img
             src={thumbnail}
+            loading="lazy"
             className={`h-full object-contain object-center ${variant === "small" ? "rounded-sm" : "rounded-md"}`}
           />
         </div>
