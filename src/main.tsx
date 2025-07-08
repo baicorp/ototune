@@ -1,16 +1,17 @@
+import "./App.css";
 import React from "react";
-import ReactDOM from "react-dom/client";
-import Layout from "./pages/Layout";
+import Home from "./pages/home";
 import { Toaster } from "sonner";
-import { RouterProvider } from "react-router";
-import { createBrowserRouter } from "react-router";
-import Search from "./pages/search";
-import Playlist from "./pages/playlist";
 import Album from "./pages/album";
 import Artist from "./pages/artist";
-import Home from "./pages/home";
-import "./App.css";
+import Layout from "./pages/Layout";
+import Search from "./pages/search";
+import Explore from "./pages/explore";
+import ReactDOM from "react-dom/client";
+import Playlist from "./pages/playlist";
 import Factory from "./pages/compFactory";
+import { RouterProvider } from "react-router";
+import { createBrowserRouter } from "react-router";
 
 const router = createBrowserRouter([
   {
@@ -25,6 +26,10 @@ const router = createBrowserRouter([
       {
         path: "/search",
         Component: Search,
+      },
+      {
+        path: "/explore",
+        Component: Explore,
       },
       {
         path: "/comp-factory",

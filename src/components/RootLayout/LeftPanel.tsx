@@ -14,24 +14,47 @@ export default function LeftPanel() {
       <NavLink className={navClassName} to="/">
         Home
       </NavLink>
-      <NavLink className={navClassName} to="/search">
-        Search
-      </NavLink>
-      <NavLink
-        className={navClassName}
-        to={`/playlist/VLRDCLAK5uy_llCyadV53fW6qlLjiTg69hTuQsnYisJ4c`}
-      >
-        Playlist
-      </NavLink>
-      <NavLink className={navClassName} to={`/album/MPREb_zXRPSlW9mbt`}>
-        Album
-      </NavLink>
-      <NavLink className={navClassName} to={`/artist/UCGr1UQ4CwzRMmYoQfHQQWTg`}>
-        Artist
+      <NavLink className={navClassName} to="/explore">
+        Explore
       </NavLink>
       <NavLink className={navClassName} to={`/comp-factory`}>
         Component Factory
       </NavLink>
+      <Library />
     </nav>
+  );
+}
+
+function Library() {
+  // TODO: fetch from local sqlite db
+  const navLink = [
+    {
+      name: "Presenting Avenged",
+      link: "/playlist/VLRDCLAK5uy_k8vey5dx6j7reeZ5Uuf4sbNVfIbgHOrYc",
+    },
+    {
+      name: "Sad summer",
+      link: "/playlist/VLRDCLAK5uy_nuMpvdFFPBATWGBB1IQEokh8u3jELKnSc",
+    },
+  ];
+
+  function navClassName({ isActive }: { isActive: boolean }) {
+    return `px-3 py-2 line-clamp-1 ${
+      isActive
+        ? "font-semibold text-black bg-neutral-200 rounded-md"
+        : "text-neutral-700"
+    }`;
+  }
+  return (
+    <>
+      <p className="cursor-default border-t border-neutral-300 px-3 py-2 text-neutral-500">
+        Your library
+      </p>
+      {navLink.map((nav, index) => (
+        <NavLink className={navClassName} key={index} to={nav.link}>
+          {nav.name}
+        </NavLink>
+      ))}
+    </>
   );
 }
