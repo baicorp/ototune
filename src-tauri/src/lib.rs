@@ -286,6 +286,37 @@ async fn explore() -> Result<serde_json::Value, String> {
 }
 
 #[tauri::command]
+async fn moods_genre_category(params: Option<String>) -> Result<serde_json::Value, String> {
+    let client = reqwest::Client::new();
+    let headers = build_headers();
+
+    let payload = serde_json::json!({
+        "browseId": "FEmusic_moods_and_genres_category",
+        "params":params,
+        "context": {
+            "client": {
+                "clientName": "WEB_REMIX",
+                "clientVersion": "1.20220918"
+            }
+        },
+        "racyCheckOk": true,
+        "contentCheckOk": true
+    });
+
+    let res = client
+        .post(yt_url("browse"))
+        .headers(headers)
+        .json(&payload)
+        .send()
+        .await
+        .map_err(|e| e.to_string())?;
+
+    res.json::<serde_json::Value>()
+        .await
+        .map_err(|e| e.to_string())
+}
+
+#[tauri::command]
 async fn get_audio_url(app: tauri::AppHandle, video_id: String) -> String {
     let video_url = format!(
         "https://www.youtube.com/watch?v={}",
@@ -324,6 +355,7 @@ pub fn run() {
             get_queue_list,
             get_home,
             explore,
+            moods_genre_category,
             get_audio_url
         ])
         .run(tauri::generate_context!())
