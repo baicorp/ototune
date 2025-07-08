@@ -1,6 +1,5 @@
-import { useNavigate } from "react-router";
-import { useSearchParams } from "react-router";
 import { FormEvent, useEffect, useState } from "react";
+import { useSearchParams, useLocation, useNavigate } from "react-router";
 
 export default function TopPanel() {
   return (
@@ -42,33 +41,32 @@ function SearchBar() {
 }
 
 function NavigationHistory() {
-  const [canGoBack, setCanGoBack] = useState(false);
-  const [canGoForward, setCanGoForward] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const updateNavState = () => {
-    const idx = window.history.state?.idx ?? 0;
-    const total = window.history.length;
-    setCanGoBack(idx > 0);
-    setCanGoForward(idx < total - 1);
-  };
+  const [historyStack, setHistoryStack] = useState<string[]>([location.key]);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
-    if (window.history.state?.idx == null) {
-      window.history.replaceState({ idx: 0 }, "", window.location.href);
+    const idx = historyStack.indexOf(location.key);
+    if (idx === -1) {
+      // put new page historyStack right after current page historyStack.
+      const newStack = [
+        ...historyStack.slice(0, currentIndex + 1),
+        location.key,
+      ];
+      setHistoryStack(newStack);
+      setCurrentIndex(newStack.length - 1);
+    } else {
+      setCurrentIndex(idx);
     }
+  }, [location]);
 
-    updateNavState();
+  const canGoBack = currentIndex > 0;
+  const canGoForward = currentIndex < historyStack.length - 1;
 
-    const onPopState = () => updateNavState();
-    window.addEventListener("popstate", onPopState);
-
-    return () => {
-      window.removeEventListener("popstate", onPopState);
-    };
-  }, []);
-
-  const goBack = () => canGoBack && window.history.back();
-  const goForward = () => canGoForward && window.history.forward();
+  const goBack = () => canGoBack && navigate(-1);
+  const goForward = () => canGoForward && navigate(1);
 
   return (
     <div className="flex gap-1">
