@@ -16,9 +16,7 @@ export default function Playlist() {
     if (!id) return;
     async function getPlaylist(id: string) {
       setIsLoad(true);
-      console.log(id);
       const data = await invoke<any>("get_playlist", { browseId: id });
-      console.log(data);
       setPlaylist(extractPlaylistData(data));
       setIsLoad(false);
     }
