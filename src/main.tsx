@@ -12,6 +12,7 @@ import Playlist from "./pages/playlist";
 import Factory from "./pages/compFactory";
 import { RouterProvider } from "react-router";
 import { createBrowserRouter } from "react-router";
+import CategoryContent from "./pages/CategoryContent";
 
 const router = createBrowserRouter([
   {
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
       {
         path: "/explore",
         Component: Explore,
+      },
+      {
+        path: "/explore/:params",
+        Component: CategoryContent,
       },
       {
         path: "/comp-factory",
