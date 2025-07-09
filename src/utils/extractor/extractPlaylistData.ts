@@ -37,45 +37,48 @@ export default function extractPlaylistData(playlistObject: any): PlaylistData {
     description:
       playlist?.description?.musicDescriptionShelfRenderer?.description?.runs[0]
         ?.text,
-    tracks: contents?.map((data: any) => {
-      const dataItem = data?.musicResponsiveListItemRenderer;
-      return {
-        id: dataItem?.flexColumns[0]?.musicResponsiveListItemFlexColumnRenderer
-          ?.text?.runs[0]?.navigationEndpoint?.watchEndpoint?.videoId,
-        title:
-          dataItem?.flexColumns[0]?.musicResponsiveListItemFlexColumnRenderer
-            ?.text?.runs[0]?.text,
-        artists: dataItem?.flexColumns
-          ?.map((flexColumn: any) =>
-            flexColumn.musicResponsiveListItemFlexColumnRenderer?.text?.runs?.map(
-              (run: any) => {
-                if (
-                  !run?.navigationEndpoint?.browseEndpoint?.browseId?.startsWith(
-                    "UC",
+    tracks: contents
+      ?.map((data: any) => {
+        const dataItem = data?.musicResponsiveListItemRenderer;
+        return {
+          id: dataItem?.flexColumns[0]
+            ?.musicResponsiveListItemFlexColumnRenderer?.text?.runs[0]
+            ?.navigationEndpoint?.watchEndpoint?.videoId,
+          title:
+            dataItem?.flexColumns[0]?.musicResponsiveListItemFlexColumnRenderer
+              ?.text?.runs[0]?.text,
+          artists: dataItem?.flexColumns
+            ?.map((flexColumn: any) =>
+              flexColumn.musicResponsiveListItemFlexColumnRenderer?.text?.runs?.map(
+                (run: any) => {
+                  if (
+                    !run?.navigationEndpoint?.browseEndpoint?.browseId?.startsWith(
+                      "UC",
+                    )
                   )
-                )
-                  return undefined;
-                return {
-                  name: run?.text?.trim(),
-                  browseId: run?.navigationEndpoint?.browseEndpoint?.browseId,
-                };
-              },
-            ),
-          )
-          ?.flat(100)
-          ?.filter(Boolean),
-        thumbnail:
-          dataItem?.thumbnail?.musicThumbnailRenderer?.thumbnail?.thumbnails[1]
-            ?.url ||
-          dataItem?.thumbnail?.musicThumbnailRenderer?.thumbnail?.thumbnails[0]
-            ?.url,
-        duration:
-          dataItem?.fixedColumns[0]?.musicResponsiveListItemFixedColumnRenderer
-            ?.text?.runs[0]?.text,
-        listId:
-          dataItem?.flexColumns[0]?.musicResponsiveListItemFlexColumnRenderer
-            ?.text?.runs[0]?.navigationEndpoint?.watchEndpoint?.playlistId,
-      };
-    }),
+                    return undefined;
+                  return {
+                    name: run?.text?.trim(),
+                    browseId: run?.navigationEndpoint?.browseEndpoint?.browseId,
+                  };
+                },
+              ),
+            )
+            ?.flat(100)
+            ?.filter(Boolean),
+          thumbnail:
+            dataItem?.thumbnail?.musicThumbnailRenderer?.thumbnail
+              ?.thumbnails[1]?.url ||
+            dataItem?.thumbnail?.musicThumbnailRenderer?.thumbnail
+              ?.thumbnails[0]?.url,
+          duration:
+            dataItem?.fixedColumns[0]
+              ?.musicResponsiveListItemFixedColumnRenderer?.text?.runs[0]?.text,
+          listId:
+            dataItem?.flexColumns[0]?.musicResponsiveListItemFlexColumnRenderer
+              ?.text?.runs[0]?.navigationEndpoint?.watchEndpoint?.playlistId,
+        };
+      })
+      .filter((track: Track) => track.id && track.title),
   };
 }

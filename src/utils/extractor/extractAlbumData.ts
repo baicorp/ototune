@@ -43,38 +43,41 @@ export default function extractAlbumData(albumDataObject: any): AlbumData {
         return null;
       })
       ?.filter((data: any) => data !== null),
-    tracks: contents?.map((data: any) => {
-      const dataItem = data?.musicResponsiveListItemRenderer;
-      return {
-        id: dataItem?.flexColumns[0]?.musicResponsiveListItemFlexColumnRenderer
-          ?.text?.runs[0]?.navigationEndpoint?.watchEndpoint?.videoId,
-        title:
-          dataItem?.flexColumns[0]?.musicResponsiveListItemFlexColumnRenderer
-            ?.text?.runs[0]?.text,
-        artists: album?.straplineTextOne?.runs
-          ?.map((run: any) => {
-            if (run?.navigationEndpoint?.browseEndpoint) {
-              return {
-                name: run?.text,
-                browseId: run?.navigationEndpoint?.browseEndpoint?.browseId,
-              };
-            }
-            return undefined;
-          })
-          ?.flat(100)
-          ?.filter(Boolean),
-        thumbnail:
-          album?.thumbnail?.musicThumbnailRenderer?.thumbnail?.thumbnails[2]
-            ?.url ||
-          album?.thumbnail?.musicThumbnailRenderer?.thumbnail?.thumbnails[1]
-            ?.url?.url,
-        duration:
-          dataItem?.fixedColumns[0]?.musicResponsiveListItemFixedColumnRenderer
-            ?.text?.runs[0]?.text,
-        listId:
-          dataItem?.flexColumns[0]?.musicResponsiveListItemFlexColumnRenderer
-            ?.text?.runs[0]?.navigationEndpoint?.watchEndpoint?.playlistId,
-      };
-    }),
+    tracks: contents
+      ?.map((data: any) => {
+        const dataItem = data?.musicResponsiveListItemRenderer;
+        return {
+          id: dataItem?.flexColumns[0]
+            ?.musicResponsiveListItemFlexColumnRenderer?.text?.runs[0]
+            ?.navigationEndpoint?.watchEndpoint?.videoId,
+          title:
+            dataItem?.flexColumns[0]?.musicResponsiveListItemFlexColumnRenderer
+              ?.text?.runs[0]?.text,
+          artists: album?.straplineTextOne?.runs
+            ?.map((run: any) => {
+              if (run?.navigationEndpoint?.browseEndpoint) {
+                return {
+                  name: run?.text,
+                  browseId: run?.navigationEndpoint?.browseEndpoint?.browseId,
+                };
+              }
+              return undefined;
+            })
+            ?.flat(100)
+            ?.filter(Boolean),
+          thumbnail:
+            album?.thumbnail?.musicThumbnailRenderer?.thumbnail?.thumbnails[2]
+              ?.url ||
+            album?.thumbnail?.musicThumbnailRenderer?.thumbnail?.thumbnails[1]
+              ?.url?.url,
+          duration:
+            dataItem?.fixedColumns[0]
+              ?.musicResponsiveListItemFixedColumnRenderer?.text?.runs[0]?.text,
+          listId:
+            dataItem?.flexColumns[0]?.musicResponsiveListItemFlexColumnRenderer
+              ?.text?.runs[0]?.navigationEndpoint?.watchEndpoint?.playlistId,
+        };
+      })
+      .filter((track: Track) => track.id && track.title),
   };
 }
