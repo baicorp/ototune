@@ -17,9 +17,6 @@ export default function LeftPanel() {
       <NavLink className={navClassName} to="/explore">
         Explore
       </NavLink>
-      <NavLink className={navClassName} to={`/comp-factory`}>
-        Component Factory
-      </NavLink>
       <Library />
     </nav>
   );

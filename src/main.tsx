@@ -9,7 +9,6 @@ import Search from "./pages/search";
 import Explore from "./pages/explore";
 import ReactDOM from "react-dom/client";
 import Playlist from "./pages/playlist";
-import Factory from "./pages/compFactory";
 import { RouterProvider } from "react-router";
 import { createBrowserRouter } from "react-router";
 import CategoryContent from "./pages/CategoryContent";
@@ -35,10 +34,6 @@ const router = createBrowserRouter([
       {
         path: "/explore/:params",
         Component: CategoryContent,
-      },
-      {
-        path: "/comp-factory",
-        Component: Factory,
       },
       {
         path: "playlist/:id",
