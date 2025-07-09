@@ -40,7 +40,7 @@ export default function Explore() {
 function MoodsGenresItem({ color, title, params }: ContentsExploreType) {
   return (
     <Link to={`/explore/${params}`}>
-      <div className="flex gap-3 rounded-md overflow-hidden bg-red-100">
+      <div className="flex gap-3 rounded-md overflow-hidden bg-neutral-100">
         <div className="w-2 py-2" style={{ background: color }}></div>
         <p className="py-2">{title}</p>
       </div>
