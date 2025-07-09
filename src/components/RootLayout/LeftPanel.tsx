@@ -27,16 +27,11 @@ export default function LeftPanel() {
 
 function Library() {
   // TODO: fetch from local sqlite db
-  const navLink = [
-    {
-      name: "Presenting Avenged",
-      link: "/playlist/VLRDCLAK5uy_k8vey5dx6j7reeZ5Uuf4sbNVfIbgHOrYc",
-    },
-    {
-      name: "Sad summer",
-      link: "/playlist/VLRDCLAK5uy_nuMpvdFFPBATWGBB1IQEokh8u3jELKnSc",
-    },
-  ];
+  // ex : {
+  //        name: "Presenting Avenged",
+  //        link: "/playlist/VLRDCLAK5uy_k8vey5dx6j7reeZ5Uuf4sbNVfIbgHOrYc",
+  //      }
+  const navLink: { name: string; link: string }[] = [];
 
   function navClassName({ isActive }: { isActive: boolean }) {
     return `px-3 py-2 line-clamp-1 ${
