@@ -1,42 +1,29 @@
+import useSWR from "swr";
 import { useParams } from "react-router";
-import { useEffect, useState } from "react";
-import { invoke } from "@tauri-apps/api/core";
 import SongList from "../components/SongList";
+import { getPlaylist } from "../utils/fetcher";
 import PageWrapper from "../components/PageWrapper";
 import LibraryHeader from "../components/LibraryHeader";
-import extractPlaylistData from "../utils/extractor/extractPlaylistData";
 
 export default function Playlist() {
   const { id } = useParams();
-  const [isLoad, setIsLoad] = useState(false);
-  const [playlist, setPlaylist] =
-    useState<ReturnType<typeof extractPlaylistData>>();
+  const { data: playlistData, error, isLoading } = useSWR(id, getPlaylist);
 
-  useEffect(() => {
-    if (!id) return;
-    async function getPlaylist(id: string) {
-      setIsLoad(true);
-      const data = await invoke<any>("get_playlist", { browseId: id });
-      setPlaylist(extractPlaylistData(data));
-      setIsLoad(false);
-    }
-    getPlaylist(id);
-  }, [id]);
+  if (isLoading) return <p>Loading...</p>;
 
-  if (isLoad) return <p>Loading...</p>;
-
+  if (error) return <p>Hmm.. failed fetch data.</p>;
   return (
     <PageWrapper>
-      {playlist && (
+      {playlistData && (
         <>
           <LibraryHeader
-            title={playlist?.title}
-            subtitle={playlist?.subtitle}
-            thumbnail={playlist?.thumbnail}
-            description={playlist?.description}
-            stat={playlist?.playlistStat}
+            title={playlistData?.title}
+            subtitle={playlistData?.subtitle}
+            thumbnail={playlistData?.thumbnail}
+            description={playlistData?.description}
+            stat={playlistData?.playlistStat}
           />
-          <SongList tracks={playlist?.tracks} variant="playlist" />
+          <SongList tracks={playlistData?.tracks} variant="playlist" />
         </>
       )}
     </PageWrapper>

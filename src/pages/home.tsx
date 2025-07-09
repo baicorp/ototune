@@ -1,72 +1,39 @@
-import { toast } from "sonner";
-import { MixContent } from "../types";
-import { useEffect, useState } from "react";
-import { invoke } from "@tauri-apps/api/core";
+import useSWR from "swr";
+import { home } from "../utils/fetcher";
 import PageWrapper from "../components/PageWrapper";
 import DynamicComponent from "../components/DynamicComp";
-import extractHomeData from "../utils/extractor/extractHomeData";
 import CategoryListLayout from "../components/CategoryListLayout";
 
 export default function Home() {
-  const [homeData, setHomeData] = useState<MixContent[]>([]);
-  const [isLoad, setIsLoad] = useState(false);
+  const { data: homeData, error, isLoading } = useSWR("home-page", home);
 
-  useEffect(() => {
-    async function getHomeData() {
-      try {
-        setIsLoad(true);
-        let { local, global } = await invoke<any>("get_home");
-        local = extractHomeData(local);
-        global = extractHomeData(global);
-        const homeData = [
-          {
-            headerTitle: "Local " + local[0].headerTitle,
-            contents: local[0].contents,
-          },
-          {
-            headerTitle: "Global " + global[0].headerTitle,
-            contents: global[0].contents,
-          },
-        ];
-        setHomeData(homeData);
-        setIsLoad(false);
-      } catch (e: any) {
-        setIsLoad(false);
-        toast.error("failed to fetch search data");
-      }
-    }
-    getHomeData();
-  }, []);
+  if (isLoading) return <p>Loading...</p>;
 
+  if (error) return <p>failed to fetch data.</p>;
   return (
     <PageWrapper>
-      {isLoad ? (
-        <p>Loading...</p>
-      ) : (
-        homeData &&
-        homeData.map((data, index) => {
-          return (
-            <section key={index}>
-              <p
-                className={`font-semibold text-xl ${index !== 0 && "mt-4"} mb-2`}
-              >
-                {data.headerTitle}
-              </p>
-              <CategoryListLayout category={data.contents[0].type}>
-                {data.contents.map((content, index) => {
-                  return (
-                    <DynamicComponent
-                      key={index}
-                      type={content.type}
-                      props={content}
-                    />
-                  );
-                })}
-              </CategoryListLayout>
-            </section>
-          );
-        })
-      )}
+      {homeData?.map((data, index) => {
+        return (
+          <section key={index}>
+            <p
+              className={`font-semibold text-xl ${index !== 0 && "mt-4"} mb-2`}
+            >
+              {data.headerTitle}
+            </p>
+            <CategoryListLayout category={data.contents[0].type}>
+              {data.contents.map((content, index) => {
+                return (
+                  <DynamicComponent
+                    key={index}
+                    type={content.type}
+                    props={content}
+                  />
+                );
+              })}
+            </CategoryListLayout>
+          </section>
+        );
+      })}
     </PageWrapper>
   );
 }

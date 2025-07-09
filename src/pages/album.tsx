@@ -1,45 +1,30 @@
+import useSWR from "swr";
 import { useParams } from "react-router";
-import { useEffect, useState } from "react";
+import { getAlbum } from "../utils/fetcher";
 import SongList from "../components/SongList";
-import { invoke } from "@tauri-apps/api/core";
 import PageWrapper from "../components/PageWrapper";
 import LibraryHeader from "../components/LibraryHeader";
-import extractAlbumData from "../utils/extractor/extractAlbumData";
 
 export default function Album() {
   const { id } = useParams();
-  const [isLoad, setIsLoad] = useState(false);
-  const [album, setAlbum] = useState<ReturnType<typeof extractAlbumData>>();
+  const { data: albumData, error, isLoading } = useSWR(id, getAlbum);
 
-  useEffect(() => {
-    if (!id) return;
-    async function getAlbum(id: string) {
-      setIsLoad(true);
-      const data = await invoke<ReturnType<typeof extractAlbumData>>(
-        "get_album",
-        { browseId: id },
-      );
-      setAlbum(extractAlbumData(data));
-      setIsLoad(false);
-    }
-    getAlbum(id);
-  }, [id]);
+  if (isLoading) return <p>Loading...</p>;
 
-  if (isLoad) return <p>Loading...</p>;
-
+  if (error) return <p>Hmm.. failed fetch data.</p>;
   return (
     <PageWrapper>
-      {album && (
+      {albumData && (
         <>
           <LibraryHeader
-            title={album.title}
-            subtitle={album.subtitle}
-            thumbnail={album.thumbnail}
-            description={album.description}
-            artists={album.artists}
-            stat={album.albumStat}
+            title={albumData.title}
+            subtitle={albumData.subtitle}
+            thumbnail={albumData.thumbnail}
+            description={albumData.description}
+            artists={albumData.artists}
+            stat={albumData.albumStat}
           />
-          <SongList tracks={album.tracks} variant="album" />
+          <SongList tracks={albumData.tracks} variant="album" />
         </>
       )}
     </PageWrapper>
