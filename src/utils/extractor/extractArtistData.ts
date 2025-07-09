@@ -60,8 +60,16 @@ export default function extractArtistData(channelObject: any): ArtistData {
       channelObject?.contents?.singleColumnBrowseResultsRenderer?.tabs[0]?.tabRenderer?.content?.sectionListRenderer?.contents
         ?.map((data: any) => {
           if (data?.musicShelfRenderer) {
+            const headerTitle = data?.musicShelfRenderer?.title?.runs[0]?.text;
+            if (
+              ["podcast", "last episodes"].some((data) =>
+                data.includes(headerTitle.toLowerCase()),
+              )
+            ) {
+              return undefined;
+            }
             return {
-              headerTitle: data?.musicShelfRenderer?.title?.runs[0]?.text,
+              headerTitle,
               contents: data?.musicShelfRenderer?.contents?.map((data: any) => {
                 return {
                   id: data?.musicResponsiveListItemRenderer?.flexColumns[0]
@@ -119,10 +127,18 @@ export default function extractArtistData(channelObject: any): ArtistData {
             };
           }
           if (data?.musicCarouselShelfRenderer) {
+            const headerTitle =
+              data?.musicCarouselShelfRenderer?.header
+                ?.musicCarouselShelfBasicHeaderRenderer?.title?.runs[0]?.text;
+            if (
+              ["podcasts", "latest episodes"].some((data) =>
+                data.includes(headerTitle.toLowerCase()),
+              )
+            ) {
+              return undefined;
+            }
             return {
-              headerTitle:
-                data?.musicCarouselShelfRenderer?.header
-                  ?.musicCarouselShelfBasicHeaderRenderer?.title?.runs[0]?.text,
+              headerTitle,
               contents: data?.musicCarouselShelfRenderer?.contents?.map(
                 (data: any) => {
                   return {
