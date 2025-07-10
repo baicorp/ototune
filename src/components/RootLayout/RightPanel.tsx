@@ -1,29 +1,66 @@
+import useSWR from "swr";
 import SongList from "../SongList";
 import usePlayer from "../../hooks/usePlayer";
+import { getLyrics } from "../../utils/fetcher";
 import { useLayout } from "../../hooks/useLayout";
+import formatLyric from "../../utils/formatLyric";
 
 export default function RightPanel() {
-  const { trackQueue } = usePlayer();
-  const { isRightPanelOpen } = useLayout();
+  const { rightPanel } = useLayout();
 
   return (
     <aside
-      className={`relative ${isRightPanelOpen ? "basis-[25%]" : "basis-0"} transition-all grow-0 shrink-0 overflow-x-hidden overflow-y-auto border-l border-neutral-300`}
+      className={`relative ${rightPanel.isOpen ? "basis-[25%]" : "basis-0"} transition-all grow-0 shrink-0 overflow-x-hidden overflow-y-auto border-l border-neutral-300`}
     >
+      <p className="p-3 border-b border-neutral-300 lg:px-6 lg:py-4 font-semibold sticky top-0 bg-white z-10">
+        {rightPanel.content}
+      </p>
+      <div className="px-2 py-2 lg:px-6 lg:py-4">
+        {rightPanel.content === "queue" && <QueueContent />}
+        {rightPanel.content === "lyrics" && <Lyrics />}
+      </div>
+    </aside>
+  );
+}
+
+function QueueContent() {
+  const { trackQueue } = usePlayer();
+  return (
+    <>
       {trackQueue.length !== 0 ? (
-        <>
-          <p className="p-3 border-b border-neutral-300 lg:px-6 lg:py-4 font-semibold sticky top-0 bg-white z-10">
-            Queue
-          </p>
-          <div className="px-2 py-2 lg:px-6 lg:py-4">
-            <SongList variant="queue" tracks={trackQueue} />
-          </div>
-        </>
+        <SongList variant="queue" tracks={trackQueue} />
       ) : (
         <p className="h-full flex justify-center items-center">
           Queue is Empty
         </p>
       )}
-    </aside>
+    </>
+  );
+}
+
+function Lyrics() {
+  const { currentTrack } = usePlayer();
+  const {
+    data: lyricsData,
+    error,
+    isLoading,
+  } = useSWR(currentTrack?.id, getLyrics);
+
+  if (isLoading) return <p>Loading...</p>;
+
+  if (error) return <p>Hmm.. failed fetch data.</p>;
+  return (
+    <>
+      {lyricsData &&
+        formatLyric(lyricsData).map((lyric, index) => {
+          return lyric === "###" ? (
+            <div className="mb-6"></div>
+          ) : (
+            <p key={index} className="text-center leading-snug">
+              {lyric}
+            </p>
+          );
+        })}
+    </>
   );
 }
