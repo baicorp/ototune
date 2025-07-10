@@ -7,6 +7,10 @@ import extractSearchData from "./extractor/extractSearchData";
 import extractArtistData from "./extractor/extractArtistData";
 import extractPlaylistData from "./extractor/extractPlaylistData";
 import extractMoodsGnereCategory from "./extractor/extractMooodsGenres";
+import {
+  extractLyricsBrowseId,
+  extractLyricsData,
+} from "./extractor/extractLyrics";
 
 export async function search(query: string): Promise<MixContent[] | undefined> {
   try {
@@ -96,6 +100,21 @@ export async function moodsGenresCategory(
       params,
     });
     return extractMoodsGnereCategory(rawExploreData);
+  } catch (e: any) {
+    throw new Error(e);
+  }
+}
+
+export async function getLyrics(id: string): Promise<string> {
+  try {
+    const rawLyricsBrowseId = await invoke<any>("get_lyrics_browse_id", {
+      videoId: id,
+    });
+    const lyricsBrowseId = extractLyricsBrowseId(rawLyricsBrowseId);
+    const rawLyricsContent = await invoke<any>("get_lyrics_content", {
+      browseId: lyricsBrowseId,
+    });
+    return extractLyricsData(rawLyricsContent);
   } catch (e: any) {
     throw new Error(e);
   }

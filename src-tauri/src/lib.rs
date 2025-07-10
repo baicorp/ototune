@@ -317,6 +317,66 @@ async fn moods_genre_category(params: Option<String>) -> Result<serde_json::Valu
 }
 
 #[tauri::command]
+async fn get_lyrics_browse_id(video_id: String) -> Result<serde_json::Value, String> {
+    let client = reqwest::Client::new();
+    let headers = build_headers();
+
+    let body = serde_json::json!({
+        "videoId": video_id,
+        "context": {
+            "client": {
+                "clientName": "WEB_REMIX",
+                "clientVersion": "1.20220918"
+            }
+        },
+        "racyCheckOk": true,
+        "contentCheckOk": true
+    });
+
+    let res = client
+        .post(yt_url("next"))
+        .headers(headers)
+        .json(&body)
+        .send()
+        .await
+        .map_err(|e| e.to_string())?;
+
+    res.json::<serde_json::Value>()
+        .await
+        .map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+async fn get_lyrics_content(browse_id: String) -> Result<serde_json::Value, String> {
+    let client = reqwest::Client::new();
+    let headers = build_headers();
+
+    let body = serde_json::json!({
+        "browseId": browse_id,
+        "context": {
+            "client": {
+                "clientName": "WEB_REMIX",
+                "clientVersion": "1.20220918"
+            }
+        },
+        "racyCheckOk": true,
+        "contentCheckOk": true
+    });
+
+    let res = client
+        .post(yt_url("browse"))
+        .headers(headers)
+        .json(&body)
+        .send()
+        .await
+        .map_err(|e| e.to_string())?;
+
+    res.json::<serde_json::Value>()
+        .await
+        .map_err(|e| e.to_string())
+}
+
+#[tauri::command]
 async fn get_audio_url(app: tauri::AppHandle, video_id: String) -> String {
     let video_url = format!(
         "https://www.youtube.com/watch?v={}",
@@ -356,6 +416,8 @@ pub fn run() {
             get_home,
             explore,
             moods_genre_category,
+            get_lyrics_browse_id,
+            get_lyrics_content,
             get_audio_url
         ])
         .run(tauri::generate_context!())
