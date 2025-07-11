@@ -42,7 +42,7 @@ const PlayPauseButton = forwardRef<HTMLAudioElement, {}>((_, ref) => {
 
   return (
     <button
-      className="px-5 rounded-full bg-neutral-200 flex justify-center items-center"
+      className="px-5 rounded-full bg-themed-border shadow shadow-[rgba(255, 255, 255, 0.05) 0px 0px 0px 1px inset] flex justify-center items-center"
       onClick={handlePlayPause}
     >
       {isLoading ? (
@@ -59,7 +59,7 @@ const PlayPauseButton = forwardRef<HTMLAudioElement, {}>((_, ref) => {
             xmlSpace="preserve"
           >
             <path
-              fill="#000"
+              fill="#fff"
               d="M73,50c0-12.7-10.3-23-23-23S27,37.3,27,50 M30.9,50c0-10.5,8.5-19.1,19.1-19.1S69.1,39.5,69.1,50"
             >
               <animateTransform
@@ -81,7 +81,7 @@ const PlayPauseButton = forwardRef<HTMLAudioElement, {}>((_, ref) => {
             height="24px"
             viewBox="0 -960 960 960"
             width="24px"
-            fill="#000"
+            fill="#fff"
             className="w-full h-full"
           >
             <path d="M560-200v-560h160v560H560Zm-320 0v-560h160v560H240Z" />
@@ -94,7 +94,7 @@ const PlayPauseButton = forwardRef<HTMLAudioElement, {}>((_, ref) => {
             height="24px"
             viewBox="0 -960 960 960"
             width="24px"
-            fill="#000"
+            fill="#fff"
             className="w-full h-full"
           >
             <path d="M320-200v-560l440 280-440 280Z" />

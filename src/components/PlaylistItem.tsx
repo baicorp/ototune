@@ -18,7 +18,7 @@ export default function PlaylistItem({
   return (
     <Link to={`/playlist/${id}`}>
       <div
-        className={`flex ${variant === "small" ? "w-full" : "w-34 flex-col"} gap-2 cursor-pointer overflow-overflow-hidden`}
+        className={`flex ${variant === "small" ? "w-full" : "w-34 flex-col"} gap-2 overflow-overflow-hidden`}
       >
         <div
           className={`${variant === "small" ? "w-12" : "w-34"} aspect-square`}
@@ -31,7 +31,7 @@ export default function PlaylistItem({
         </div>
         <div className="flex flex-col gap-1">
           <p className="font-semibold line-clamp-2 leading-tight">{title}</p>
-          <p className="text-neutral-500 line-clamp-2">{subtitle}</p>
+          <p className="text-themed-text-muted line-clamp-2">{subtitle}</p>
         </div>
       </div>
     </Link>

@@ -29,7 +29,7 @@ const NextTrackBtn = forwardRef<HTMLAudioElement, { variant: "next" | "prev" }>(
               height="24px"
               viewBox="0 -960 960 960"
               width="24px"
-              className="w-full h-full fill-secondary"
+              className="w-full h-full fill-white"
             >
               <path d="M660-240v-480h80v480h-80Zm-440 0v-480l360 240-360 240Z"></path>
             </svg>
@@ -39,7 +39,7 @@ const NextTrackBtn = forwardRef<HTMLAudioElement, { variant: "next" | "prev" }>(
               height="24px"
               viewBox="0 -960 960 960"
               width="24px"
-              className="w-full h-full fill-secondary"
+              className="w-full h-full fill-white"
             >
               <path d="M220-240v-480h80v480h-80Zm520 0L380-480l360-240v480Z"></path>
             </svg>

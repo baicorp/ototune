@@ -33,10 +33,10 @@ export default function SongItem({
 
   return (
     <div
-      className="w-full flex items-center gap-2 cursor-pointer"
+      className="w-full flex items-center gap-2.5 cursor-pointer"
       onClick={handleClick}
     >
-      <div className="w-12 shrink-0 aspect-square relative rounded-sm overflow-hidden bg-black">
+      <div className="w-12 shrink-0 aspect-square relative rounded-sm overflow-hidden bg-themed-card">
         {thumbnail && (
           <img
             src={thumbnail}
@@ -50,7 +50,7 @@ export default function SongItem({
           </div>
         )}
         {currentTrack?.id === id && (
-          <div className="absolute bg-white/60 inset-0">
+          <div className="absolute bg-white/60 inset-0 p-2">
             <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <rect x="2" y="8" width="1.5" height="8" fill="#000" rx="0.75">
                 <animate
@@ -211,7 +211,7 @@ export default function SongItem({
               key={artist.browseId}
               to={`/artist/${artist.browseId}`}
               onClick={(e) => e.stopPropagation()}
-              className="cursor-pointer text-neutral-500 text-nowrap text-sm line-clamp-1"
+              className="cursor-pointer text-themed-text-muted text-nowrap line-clamp-1"
             >
               {artist.name}
             </Link>
@@ -220,7 +220,7 @@ export default function SongItem({
       </div>
       {duration && (
         <div className="ml-auto mr-2">
-          <p className="text-neutral-500 font-mono">{duration}</p>
+          <p className="text-themed-text-muted text-sm">{duration}</p>
         </div>
       )}
     </div>

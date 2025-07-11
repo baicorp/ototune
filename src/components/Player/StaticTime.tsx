@@ -26,7 +26,7 @@ const StaticTime = forwardRef<HTMLAudioElement, {}>((_, ref) => {
     };
   }, [audioRef.current, currentTrack]);
 
-  return <p className="text-xs font-[500]">{fullTime}</p>;
+  return <p className="text-xs tracking-tighter font-[500]">{fullTime}</p>;
 });
 
 export default StaticTime;

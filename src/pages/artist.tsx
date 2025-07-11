@@ -27,7 +27,7 @@ export default function Artist() {
           <div className="absolute flex flex-col justify-end items-center lg:items-start inset-0 lg:px-6 xl:px-10 p-4">
             <div className="flex gap-4 items-center justify-end">
               <Avatar avatar={artistData.avatar} />
-              <h1 className="font-bold text-white lg:font-black text-4xl lg:text-6xl lg:mb-2">
+              <h1 className="font-bold lg:font-black text-4xl lg:text-6xl lg:mb-2">
                 {artistData.artistName}
               </h1>
             </div>

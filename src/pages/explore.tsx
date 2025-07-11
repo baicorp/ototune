@@ -40,9 +40,9 @@ export default function Explore() {
 function MoodsGenresItem({ color, title, params }: ContentsExploreType) {
   return (
     <Link to={`/explore/${params}`}>
-      <div className="flex gap-3 rounded-md overflow-hidden bg-neutral-100">
-        <div className="w-2 py-2" style={{ background: color }}></div>
-        <p className="py-2">{title}</p>
+      <div className="h-full flex items-center gap-3 rounded-md overflow-hidden bg-themed-card">
+        <div className="w-2 h-full" style={{ background: color }}></div>
+        <p className="py-2.5">{title}</p>
       </div>
     </Link>
   );

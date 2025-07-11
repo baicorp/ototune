@@ -16,7 +16,7 @@ export default function MusicPlayerBar() {
 
   return (
     <section
-      className={`${currentTrack ? "block" : "hidden"} sticky bottom-0 border-t border-neutral-300`}
+      className={`${currentTrack ? "block" : "hidden"} sticky bottom-0 border-t border-themed-border`}
     >
       <div className="flex h-19">
         <PlayerInfo currentTrack={currentTrack} />
@@ -40,7 +40,7 @@ function PlayerInfo({ currentTrack }: Pick<TrackState, "currentTrack">) {
       {currentTrack && (
         <div className="h-full basis-[30%] max-w-[30%] px-4">
           <div className="h-full flex items-center gap-2">
-            <div className="shrink-0 w-13 aspect-square border border-neutral-300 rounded-sm">
+            <div className="shrink-0 w-13 aspect-square border border-themed-border rounded-sm">
               <img
                 src={currentTrack.thumbnail}
                 className="w-13 h-full object-contain rounded-sm"
@@ -54,7 +54,7 @@ function PlayerInfo({ currentTrack }: Pick<TrackState, "currentTrack">) {
                     key={artist.browseId}
                     to={`/artist/${artist.browseId}`}
                     onClick={(e) => e.stopPropagation()}
-                    className="cursor-pointer text-neutral-500 text-nowrap text-sm line-clamp-1"
+                    className="cursor-pointer text-themed-text-muted text-nowrap text-sm line-clamp-1"
                   >
                     {artist.name}
                   </Link>
@@ -115,39 +115,31 @@ const PlayerActions = forwardRef<HTMLAudioElement, {}>((_, ref) => {
     <div className="h-full px-4 flex-[30%]">
       <div className="h-full flex justify-between gap-3 items-center">
         <VolumeSlider ref={audioRef} />
-        <button
-          className="cursor-pointer"
-          title="lyric"
-          onClick={() => handleRightPanel("lyrics")}
-        >
+        <button title="lyric" onClick={() => handleRightPanel("lyrics")}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             height="22px"
             viewBox="0 -960 960 960"
             width="22px"
-            fill={
+            className={
               rightPanel.isOpen && rightPanel.content === "lyrics"
-                ? "#000"
-                : "#737373"
+                ? "fill-white"
+                : "fill-themed-text-muted"
             }
           >
             <path d="M240-400h160v-80H240v80Zm520-80q-50 0-85-35t-35-85q0-50 35-85t85-35q11 0 20.5 2t19.5 5v-207h160v80h-80v240q0 50-35 85t-85 35Zm-520-40h280v-80H240v80Zm0-120h280v-80H240v80Zm0 400L80-80v-720q0-33 23.5-56.5T160-880h440q33 0 56.5 23.5T680-800v17q-55 24-87.5 73.5T560-600q0 60 32.5 109.5T680-417v97q0 33-23.5 56.5T600-240H240Z" />
           </svg>
         </button>
-        <button
-          className="cursor-pointer"
-          title="queue"
-          onClick={() => handleRightPanel("queue")}
-        >
+        <button title="queue" onClick={() => handleRightPanel("queue")}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             height="24px"
             viewBox="0 -960 960 960"
             width="24px"
-            fill={
+            className={
               rightPanel.isOpen && rightPanel.content === "queue"
-                ? "#000"
-                : "#737373"
+                ? "fill-white"
+                : "fill-themed-text-muted"
             }
           >
             <path d="M640-160q-50 0-85-35t-35-85q0-50 35-85t85-35q11 0 21 1.5t19 6.5v-328h200v80H760v360q0 50-35 85t-85 35ZM120-320v-80h320v80H120Zm0-160v-80h480v80H120Zm0-160v-80h480v80H120Z"></path>

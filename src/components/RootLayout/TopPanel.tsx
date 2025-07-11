@@ -34,7 +34,7 @@ function SearchBar() {
         placeholder="Find your favorite music"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        className="px-3 py-1.5 outline-none border border-neutral-300 rounded-full flex-1"
+        className="px-4 py-1 focus:outline focus:outline-themed-text bg-themed-bg rounded-md flex-1"
       />
     </form>
   );
@@ -70,17 +70,13 @@ function NavigationHistory() {
 
   return (
     <div className="flex gap-1">
-      <button
-        onClick={goBack}
-        disabled={!canGoBack}
-        className="px-1.5 bg-black/25 hover:bg-black/35 rounded-full disabled:bg-black/10 cursor-pointer"
-      >
+      <button onClick={goBack} disabled={!canGoBack} className="px-1.5">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           height="24px"
           viewBox="0 -960 960 960"
           width="24px"
-          fill="#fff"
+          className={`${canGoBack ? "fill-themed-text" : "fill-themed-text-muted"}`}
         >
           <path d="m313-440 224 224-57 56-320-320 320-320 57 56-224 224h487v80H313Z" />
         </svg>
@@ -88,14 +84,14 @@ function NavigationHistory() {
       <button
         onClick={goForward}
         disabled={!canGoForward}
-        className="px-1.5 bg-black/25 hover:bg-black/35 rounded-full disabled:bg-black/10 cursor-pointer"
+        className="px-1.5 rounded-full"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           height="24px"
           viewBox="0 -960 960 960"
           width="24px"
-          fill="#fff"
+          className={`${canGoForward ? "fill-themed-text" : "fill-themed-text-muted"}`}
         >
           <path d="M647-440H160v-80h487L423-744l57-56 320 320-320 320-57-56 224-224Z" />
         </svg>

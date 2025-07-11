@@ -3,14 +3,12 @@ import { NavLink } from "react-router";
 export default function LeftPanel() {
   function navClassName({ isActive }: { isActive: boolean }) {
     return `px-3 py-2 ${
-      isActive
-        ? "font-semibold text-black bg-neutral-200 rounded-md"
-        : "text-neutral-700"
+      isActive ? "rounded-md bg-themed-card" : "text-themed-text-muted"
     }`;
   }
 
   return (
-    <nav className="sticky top-0 basis-[25%] px-2 py-2 lg:px-6 lg:py-4 border-r border-neutral-300 flex flex-col gap-1 shrink-0 grow-0">
+    <nav className="sticky top-0 basis-[25%] px-2 py-2 lg:px-6 lg:py-4 border-r border-themed-border flex flex-col gap-1 shrink-0 grow-0">
       <NavLink className={navClassName} to="/">
         Home
       </NavLink>
@@ -32,14 +30,12 @@ function Library() {
 
   function navClassName({ isActive }: { isActive: boolean }) {
     return `px-3 py-2 line-clamp-1 ${
-      isActive
-        ? "font-semibold text-black bg-neutral-200 rounded-md"
-        : "text-neutral-700"
+      isActive ? "rounded-md bg-themed-card" : "text-themed-text-muted"
     }`;
   }
   return (
     <>
-      <p className="cursor-default border-t border-neutral-300 px-3 py-2 text-neutral-500">
+      <p className="cursor-default border-t border-themed-border px-3 py-2 text-themed-text-muted">
         Your library
       </p>
       {navLink.map((nav, index) => (

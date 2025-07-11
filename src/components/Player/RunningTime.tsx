@@ -30,7 +30,11 @@ const RunningTime = forwardRef<HTMLAudioElement, {}>((_, ref) => {
     setCurrentTime(0);
   }, [audioRef.current, currentTrack]);
 
-  return <span className="text-xs font-[500]">{formatTime(currentTime)}</span>;
+  return (
+    <span className="text-xs tracking-tighter font-[500]">
+      {formatTime(currentTime)}
+    </span>
+  );
 });
 
 export default RunningTime;

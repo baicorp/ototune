@@ -24,7 +24,7 @@ export default function ArtistItem({
           />
           <div>
             <p className="text-center font-semibold line-clamp-2">{title}</p>
-            <p className="text-center text-neutral-500">{subtitle}</p>
+            <p className="text-center text-themed-text-muted">{subtitle}</p>
           </div>
         </div>
       </div>

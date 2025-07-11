@@ -27,8 +27,8 @@ export default function LibraryHeader({
       <div className="py-4 flex flex-col gap-2">
         <h1 className="font-bold text-2xl mb-3">{title}</h1>
         <div>
-          <p className="text-neutral-500">{subtitle}</p>
-          <p className="text-neutral-500">{stat}</p>
+          <p className="text-themed-text-muted">{subtitle}</p>
+          <p className="text-themed-text-muted">{stat}</p>
         </div>
         {artists &&
           artists.map((artist) => (

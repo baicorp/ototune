@@ -7,7 +7,7 @@ import MusicPlayerBar from "../components/Player/MusicPlayerBar";
 export default function Layout() {
   return (
     <div className="flex flex-col h-dvh">
-      <section className="border-b border-neutral-300 flex justify-center">
+      <section className="bg-themed-card flex justify-center">
         <TopPanel />
       </section>
       <section className="relative flex grow h-full overflow-hidden">

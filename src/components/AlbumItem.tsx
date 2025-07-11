@@ -36,7 +36,7 @@ export default function AlbumItem({
           <p className="font-semibold line-clamp-2 leading-tight">{title}</p>
           <div className="flex gap-1 items-center">
             {explicit && <img src={explicitIco} className="w-5" />}
-            <p className="text-neutral-500 line-clamp-2">{subtitle}</p>
+            <p className="text-themed-text-muted line-clamp-2">{subtitle}</p>
           </div>
         </div>
       </div>

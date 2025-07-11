@@ -1,1 +1,81 @@
 @import "tailwindcss";
+
+@font-face {
+    font-family: "Roboto Flex";
+    src: url("./assets/fonts/RobotoFlex-VariableFont_GRAD\,XOPQ\,XTRA\,YOPQ\,YTAS\,YTDE\,YTFI\,YTLC\,YTUC\,opsz\,slnt\,wdth\,wght.ttf")
+        format("truetype");
+    font-weight: 100 900;
+    font-display: swap;
+}
+
+@theme {
+    --default-font-family: "Roboto Flex";
+    --color-themed-bg: rgb(10, 10, 10);
+    --color-themed-card: #222226;
+    --color-themed-text: #e0e0e0;
+    --color-themed-text-muted: #737373;
+    --color-themed-border: #383838;
+}
+
+@layer base {
+    html,
+    body {
+        background: var(--color-themed-bg);
+        color: var(--color-themed-text);
+    }
+
+    button {
+        cursor: pointer;
+    }
+
+    /* remove all base style */
+    input[type="range"] {
+        cursor: pointer;
+        width: 100%;
+    }
+
+    /***** Track Styles *****/
+    /***** Chrome, Safari, Opera, and Edge Chromium *****/
+    input[type="range"]::-webkit-slider-runnable-track {
+        background: var(--color-themed-text-muted);
+        height: 4px;
+        border-radius: 20px;
+    }
+
+    /***** Track Styles *****/
+    /******** Firefox ********/
+    input[type="range"]::-moz-range-track {
+        background: var(--color-themed-text-muted);
+        height: 4px;
+        border-radius: 20px;
+    }
+
+    /***** Thumb Styles *****/
+    /***** Chrome, Safari, Opera, and Edge Chromium *****/
+    input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        margin-top: -6px; /* Centers thumb on the track */
+        background-color: var(--color-themed-text);
+        height: 15px;
+        width: 5px;
+        outline: 4px solid var(--color-themed-bg);
+    }
+
+    /***** Thumb Styles *****/
+    /***** Firefox *****/
+    input[type="range"]::-moz-range-thumb {
+        border: none; /*Removes extra border that FF applies*/
+        appearance: none;
+        margin-top: -8px; /* Centers thumb on the track */
+        background-color: var(--color-themed-text);
+        height: 15px;
+        width: 5px;
+        outline: 4px solid var(--color-themed-bg);
+    }
+    /***** Focus Styles *****/
+    /* Removes default focus */
+    input[type="range"]:focus {
+        outline: none;
+    }
+}
