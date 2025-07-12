@@ -1,12 +1,60 @@
 import { FormEvent, useEffect, useState } from "react";
+import { getCurrentWindow } from "@tauri-apps/api/window";
 import { useSearchParams, useLocation, useNavigate } from "react-router";
 
 export default function TopPanel() {
+  console.log("rerender");
   return (
-    <div className="flex gap-3 p-1.5 basis-1/2">
-      <NavigationHistory />
-      <SearchBar />
-    </div>
+    <section
+      className="bg-themed-card flex justify-center items-center cursor-default"
+      onMouseDown={async (e) => {
+        const target = e.target as HTMLElement;
+        const tag = target.tagName.toLowerCase();
+
+        // Prevent dragging when clicking on interactive elements
+        const isInteractive = ["button", "svg", "path"].includes(tag);
+        if (!isInteractive) {
+          getCurrentWindow().startDragging();
+        }
+      }}
+    >
+      <div className="flex gap-3 p-1 basis-1/2">
+        <NavigationHistory />
+        <SearchBar />
+      </div>
+      <div className="absolute right-0 flex gap-2.5 h-11 pr-2">
+        <WindowActionButton type="minimize">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 -960 960 960"
+            fill="#e3e3e3"
+            className="w-full"
+          >
+            <path d="M240-120v-80h480v80H240Z" />
+          </svg>
+        </WindowActionButton>
+        <WindowActionButton type="toggleMaximize">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 -960 960 960"
+            fill="#e3e3e3"
+            className="w-full"
+          >
+            <path d="M200-200v-560h560v560H200Zm80-80h400v-400H280v400Z" />
+          </svg>
+        </WindowActionButton>
+        <WindowActionButton type="close">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 -960 960 960"
+            fill="#e3e3e3"
+            className="w-full"
+          >
+            <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z" />
+          </svg>
+        </WindowActionButton>
+      </div>
+    </section>
   );
 }
 
@@ -34,7 +82,7 @@ function SearchBar() {
         placeholder="Find your favorite music"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        className="px-4 py-1 focus:outline focus:outline-themed-text bg-themed-bg rounded-md flex-1"
+        className="px-4 py-1.5 focus:outline focus:outline-themed-text bg-themed-bg rounded-md flex-1"
       />
     </form>
   );
@@ -69,32 +117,61 @@ function NavigationHistory() {
   const goForward = () => canGoForward && navigate(1);
 
   return (
-    <div className="flex gap-1">
-      <button onClick={goBack} disabled={!canGoBack} className="px-1.5">
+    <div className="flex">
+      <button onClick={goBack} disabled={!canGoBack} className="w-9 p-2">
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          height="24px"
           viewBox="0 -960 960 960"
-          width="24px"
           className={`${canGoBack ? "fill-themed-text" : "fill-themed-text-muted"}`}
         >
           <path d="m313-440 224 224-57 56-320-320 320-320 57 56-224 224h487v80H313Z" />
         </svg>
       </button>
-      <button
-        onClick={goForward}
-        disabled={!canGoForward}
-        className="px-1.5 rounded-full"
-      >
+      <button onClick={goForward} disabled={!canGoForward} className="w-9 p-2">
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          height="24px"
           viewBox="0 -960 960 960"
-          width="24px"
           className={`${canGoForward ? "fill-themed-text" : "fill-themed-text-muted"}`}
         >
           <path d="M647-440H160v-80h487L423-744l57-56 320 320-320 320-57-56 224-224Z" />
         </svg>
+      </button>
+    </div>
+  );
+}
+
+function WindowActionButton({
+  children,
+  type,
+}: {
+  children: React.ReactNode;
+  type: "toggleMaximize" | "minimize" | "close";
+}) {
+  async function minimize() {
+    await getCurrentWindow().minimize();
+  }
+  async function toggleMaximize() {
+    await getCurrentWindow().toggleMaximize();
+  }
+  async function close() {
+    await getCurrentWindow().close();
+  }
+
+  return (
+    <div className="flex items-center h-full">
+      <button
+        className="w-6 aspect-square p-1.5 bg-neutral-700 rounded-full flex justify-center items-center"
+        onClick={(e) => {
+          e.preventDefault();
+          const actions = {
+            close,
+            toggleMaximize,
+            minimize,
+          };
+          actions[type]?.();
+        }}
+      >
+        {children}
       </button>
     </div>
   );

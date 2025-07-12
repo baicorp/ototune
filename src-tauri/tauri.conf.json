@@ -12,6 +12,7 @@
   "app": {
     "windows": [
       {
+        "decorations": false,
         "title": "Ototune",
         "width": 950,
         "height": 700,
