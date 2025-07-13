@@ -82,7 +82,7 @@ function SearchBar() {
         placeholder="Find your favorite music"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        className="px-4 py-1.5 focus:outline focus:outline-themed-text bg-themed-bg rounded-md flex-1"
+        className="px-4 py-1.5 focus:outline-2 focus:outline-offset-1 focus:outline-themed-text-muted bg-themed-bg rounded-lg flex-1"
       />
     </form>
   );
