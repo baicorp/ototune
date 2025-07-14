@@ -10,7 +10,7 @@ export default function Layout() {
       <TopPanel />
       <section className="relative flex grow h-full overflow-hidden">
         <LeftPanel />
-        <main className="basis-1/2 grow overflow-y-auto">
+        <main className="grow overflow-y-auto">
           <Outlet />
         </main>
         <RightPanel />

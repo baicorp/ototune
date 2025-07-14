@@ -18,7 +18,7 @@ export default function MusicPlayerBar() {
     <section
       className={`${currentTrack ? "block" : "hidden"} sticky bottom-0 border-t border-themed-border`}
     >
-      <div className="flex h-19">
+      <div className="flex lg:gap-4 xl:gap-10 h-19">
         <PlayerInfo currentTrack={currentTrack} />
         <PlayerControls ref={audioRef} />
         <PlayerActions ref={audioRef} />
@@ -113,7 +113,7 @@ const PlayerActions = forwardRef<HTMLAudioElement, {}>((_, ref) => {
 
   return (
     <div className="h-full px-4 flex-[30%]">
-      <div className="h-full flex justify-between gap-3 items-center">
+      <div className="h-full flex justify-around gap-3 items-center">
         <VolumeSlider ref={audioRef} />
         <button title="lyric" onClick={() => handleRightPanel("lyrics")}>
           <svg
