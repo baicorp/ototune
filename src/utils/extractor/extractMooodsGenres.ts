@@ -51,6 +51,18 @@ export default function extractMoodsGnereCategory(
               content?.musicTwoRowItemRenderer?.thumbnailRenderer
                 ?.musicThumbnailRenderer?.thumbnail?.thumbnails[0]?.url,
             duration: null,
+            explicit: [
+              content?.musicResponsiveListItemRenderer,
+              content?.musicTwoRowItemRenderer,
+            ].some((content) =>
+              ["badges", "subtitleBadges"].some((key) =>
+                content?.[key as "badges" | "subtitleBadges"]?.some(
+                  (badge: any) =>
+                    badge?.musicInlineBadgeRenderer?.accessibilityData
+                      ?.accessibilityData?.label === "Explicit",
+                ),
+              ),
+            ),
             listId:
               content?.musicResponsiveListItemRenderer?.flexColumns[0]
                 ?.musicResponsiveListItemFlexColumnRenderer?.text?.runs[0]

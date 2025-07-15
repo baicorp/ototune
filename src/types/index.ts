@@ -3,6 +3,7 @@ export interface Track {
   title: string;
   artists: { name: string; browseId: string }[];
   thumbnail?: string;
+  explicit: boolean;
   duration: string | null;
   listId: string | null;
 }

@@ -74,6 +74,12 @@ export default function extractPlaylistData(playlistObject: any): PlaylistData {
           duration:
             dataItem?.fixedColumns[0]
               ?.musicResponsiveListItemFixedColumnRenderer?.text?.runs[0]?.text,
+          explicit:
+            dataItem?.badges?.some(
+              (badge: any) =>
+                badge?.musicInlineBadgeRenderer?.accessibilityData
+                  ?.accessibilityData?.label === "Explicit",
+            ) ?? false,
           listId:
             dataItem?.flexColumns[0]?.musicResponsiveListItemFlexColumnRenderer
               ?.text?.runs[0]?.navigationEndpoint?.watchEndpoint?.playlistId,

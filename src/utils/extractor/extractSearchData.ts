@@ -1,6 +1,5 @@
 import { MixContent } from "../../types";
 import { contentType } from "../contentType";
-import { timeRegex } from "../regex";
 
 export default function extractSearchData(searchDataObject: any): MixContent[] {
   let contents: any[];
@@ -11,6 +10,9 @@ export default function extractSearchData(searchDataObject: any): MixContent[] {
     .map((content: any) => {
       // get top result
       if (content?.musicCardShelfRenderer) {
+        const subtitle = content?.musicCardShelfRenderer?.subtitle?.runs?.map(
+          (run: any) => run?.text?.trim(),
+        );
         return {
           headerTitle:
             content?.musicCardShelfRenderer?.header
@@ -23,10 +25,9 @@ export default function extractSearchData(searchDataObject: any): MixContent[] {
                 content?.musicCardShelfRenderer?.title?.runs[0]
                   ?.navigationEndpoint?.watchEndpoint?.videoId,
               title: content?.musicCardShelfRenderer?.title?.runs[0]?.text,
-              subtitle: content?.musicCardShelfRenderer?.subtitle?.runs
-                ?.map((run: any) => run?.text?.trim())
-                ?.flat(100)
-                ?.filter((data: any) => data.trim() !== ","),
+              subtitle: subtitle
+                .join(" ")
+                .replace(/^(Album|Playlist|Artist) • /, ""),
               thumbnail:
                 content?.musicCardShelfRenderer?.thumbnail
                   ?.musicThumbnailRenderer?.thumbnail?.thumbnails[1]?.url ||
@@ -46,13 +47,17 @@ export default function extractSearchData(searchDataObject: any): MixContent[] {
                   };
                 })
                 ?.filter(Boolean),
-              duration:
-                content?.musicCardShelfRenderer?.subtitle?.runs
-                  ?.map((run: any) => {
-                    if (!timeRegex.test(run?.text)) return undefined;
-                    return run?.text;
-                  })
-                  ?.filter((data: any) => data !== undefined)[0] || null,
+              duration: subtitle[subtitle.length - 1] || null,
+              explicit:
+                ["badges", "subtitleBadges"].some((key) =>
+                  content?.musicCardShelfRenderer?.[
+                    key as "badges" | "subtitleBadges"
+                  ]?.some(
+                    (badge: any) =>
+                      badge?.musicInlineBadgeRenderer?.accessibilityData
+                        ?.accessibilityData?.label === "Explicit",
+                  ),
+                ) ?? false,
               listId: null,
               type: contentType(
                 content?.musicCardShelfRenderer?.title?.runs[0]
@@ -84,15 +89,12 @@ export default function extractSearchData(searchDataObject: any): MixContent[] {
           contents: content?.musicShelfRenderer?.contents?.map(
             (content: any) => {
               const subtitle =
-                content?.musicResponsiveListItemRenderer?.flexColumns
-                  ?.map((flexColumn: any) =>
+                content?.musicResponsiveListItemRenderer?.flexColumns?.map(
+                  (flexColumn: any) =>
                     flexColumn.musicResponsiveListItemFlexColumnRenderer?.text?.runs?.map(
                       (run: any) => run?.text?.trim(),
                     ),
-                  )
-                  ?.flat(100)
-                  ?.filter((data: any) => data.trim() !== ",")
-                  ?.slice(1);
+                )[1];
               return {
                 id:
                   content?.musicResponsiveListItemRenderer?.navigationEndpoint
@@ -105,7 +107,9 @@ export default function extractSearchData(searchDataObject: any): MixContent[] {
                   content?.musicResponsiveListItemRenderer?.flexColumns[0]
                     .musicResponsiveListItemFlexColumnRenderer?.text?.runs[0]
                     ?.text,
-                subtitle,
+                subtitle: subtitle
+                  .join(" ")
+                  .replace(/^(Album|Playlist|Artist) • /, ""),
                 thumbnail:
                   content?.musicResponsiveListItemRenderer?.thumbnail
                     ?.musicThumbnailRenderer?.thumbnail?.thumbnails[1]?.url ||
@@ -131,9 +135,17 @@ export default function extractSearchData(searchDataObject: any): MixContent[] {
                   )
                   ?.flat(100)
                   ?.filter(Boolean),
-                duration:
-                  subtitle.filter((data: any) => timeRegex.test(data))[0] ||
-                  null,
+                duration: subtitle[subtitle.length - 1] || null,
+                explicit:
+                  ["badges", "subtitleBadges"].some((key) =>
+                    content?.musicResponsiveListItemRenderer?.[
+                      key as "badges" | "subtitleBadges"
+                    ]?.some(
+                      (badge: any) =>
+                        badge?.musicInlineBadgeRenderer?.accessibilityData
+                          ?.accessibilityData?.label === "Explicit",
+                    ),
+                  ) ?? false,
                 listId: null,
                 type: contentType(
                   content?.musicResponsiveListItemRenderer?.overlay

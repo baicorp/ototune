@@ -29,6 +29,12 @@ export default function extractQueueData(queueData: any): Track[] {
           next?.thumbnail?.thumbnails[1]?.url ||
           next?.thumbnail?.thumbnails[0]?.url,
         duration: next?.lengthText?.runs[0]?.text,
+        explicit:
+          next?.badges?.some(
+            (badge: any) =>
+              badge?.musicInlineBadgeRenderer?.accessibilityData
+                ?.accessibilityData?.label === "Explicit",
+          ) ?? false,
         listId: next?.navigationEndpoint?.watchEndpoint?.playlistId || null,
       };
     })

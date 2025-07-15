@@ -23,6 +23,7 @@ export default function SongList({
           artists={track.artists}
           duration={variant === "queue" ? null : track.duration}
           id={track.id}
+          explicit={track.explicit}
           listId={track.listId}
         />
       ))}

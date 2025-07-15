@@ -7,7 +7,6 @@ import PlayPauseButton from "./PlayPauseBtn";
 import NextTrackBtn from "./PrevNextTrackBtn";
 import ProgressBarTime from "./ProgressBarTime";
 import { useLayout } from "../../hooks/useLayout";
-import filledLove from "../../assets/filledLove.svg";
 import usePlayer, { TrackState } from "../../hooks/usePlayer";
 
 export default function MusicPlayerBar() {
@@ -38,7 +37,7 @@ function PlayerInfo({ currentTrack }: Pick<TrackState, "currentTrack">) {
   return (
     <>
       {currentTrack && (
-        <div className="h-full basis-[30%] max-w-[30%] px-4">
+        <div className="h-full basis-[30%] max-w-[30%] pl-4 pr-2">
           <div className="h-full flex items-center gap-2">
             <div className="shrink-0 w-13 aspect-square border border-themed-border rounded-sm">
               <img
@@ -48,7 +47,18 @@ function PlayerInfo({ currentTrack }: Pick<TrackState, "currentTrack">) {
             </div>
             <div className="basis-9/12 grow-0 overflow-hidden">
               <p className="font-semibold line-clamp-1">{currentTrack.title}</p>
-              <div className="flex flex-nowrap gap-1">
+              <div className="flex items-center flex-nowrap gap-1">
+                {currentTrack.explicit && (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    height="24px"
+                    viewBox="0 -960 960 960"
+                    width="24px"
+                    className="w-4 shrink-0 aspect-square fill-themed-text-muted"
+                  >
+                    <path d="M360-280h240v-80H440v-80h160v-80H440v-80h160v-80H360v400ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Z" />
+                  </svg>
+                )}
                 {currentTrack.artists.map((artist) => (
                   <Link
                     key={artist.browseId}
@@ -61,9 +71,18 @@ function PlayerInfo({ currentTrack }: Pick<TrackState, "currentTrack">) {
                 ))}
               </div>
             </div>
-            <div className="ml-auto shrink-0 w-7 aspect-square">
-              <img src={filledLove} className="w-7" />
-            </div>
+            <button
+              className="ml-auto shrink-0 w-6 aspect-square"
+              onClick={() => {}}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 -960 960 960"
+                fill="#F44336"
+              >
+                <path d="m480-120-58-52q-101-91-167-157T150-447.5Q111-500 95.5-544T80-634q0-94 63-157t157-63q52 0 99 22t81 62q34-40 81-62t99-22q94 0 157 63t63 157q0 46-15.5 90T810-447.5Q771-395 705-329T538-172l-58 52Z" />
+              </svg>
+            </button>
           </div>
         </div>
       )}

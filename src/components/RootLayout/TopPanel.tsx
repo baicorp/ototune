@@ -3,7 +3,6 @@ import { getCurrentWindow } from "@tauri-apps/api/window";
 import { useSearchParams, useLocation, useNavigate } from "react-router";
 
 export default function TopPanel() {
-  console.log("rerender");
   return (
     <section
       className="bg-themed-card flex justify-center items-center cursor-default"

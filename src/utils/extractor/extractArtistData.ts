@@ -59,15 +59,9 @@ export default function extractArtistData(channelObject: any): ArtistData {
     contents:
       channelObject?.contents?.singleColumnBrowseResultsRenderer?.tabs[0]?.tabRenderer?.content?.sectionListRenderer?.contents
         ?.map((data: any) => {
+          // Song
           if (data?.musicShelfRenderer) {
             const headerTitle = data?.musicShelfRenderer?.title?.runs[0]?.text;
-            if (
-              ["podcast", "last episodes"].some((data) =>
-                data.includes(headerTitle.toLowerCase()),
-              )
-            ) {
-              return undefined;
-            }
             return {
               headerTitle,
               contents: data?.musicShelfRenderer?.contents?.map((data: any) => {
@@ -84,35 +78,30 @@ export default function extractArtistData(channelObject: any): ArtistData {
                       ?.musicThumbnailRenderer?.thumbnail?.thumbnails[1]?.url ||
                     data?.musicResponsiveListItemRenderer?.thumbnail
                       ?.musicThumbnailRenderer?.thumbnail?.thumbnails[0]?.url,
-                  subtitle: data?.musicResponsiveListItemRenderer?.flexColumns
-                    ?.map((data: any) =>
-                      data.musicResponsiveListItemFlexColumnRenderer?.text?.runs?.map(
-                        (data: any) => data?.text?.trim(),
-                      ),
-                    )
-                    ?.flat(100)
-                    ?.filter((data: any) => data?.trim() !== ","),
-                  artists: data?.musicResponsiveListItemRenderer?.flexColumns
-                    ?.map((data: any) =>
-                      data.musicResponsiveListItemFlexColumnRenderer?.text?.runs?.map(
-                        (run: any) => {
-                          if (
-                            !run?.navigationEndpoint?.browseEndpoint?.browseId?.startsWith(
-                              "UC",
-                            )
+                  subtitle: "",
+                  artists:
+                    data?.musicResponsiveListItemRenderer?.flexColumns[1]?.musicResponsiveListItemFlexColumnRenderer?.text?.runs
+                      ?.map((run: any) => {
+                        if (
+                          !run?.navigationEndpoint?.browseEndpoint?.browseId?.startsWith(
+                            "UC",
                           )
-                            return undefined;
-                          return {
-                            name: run?.text,
-                            browseId:
-                              run?.navigationEndpoint?.browseEndpoint?.browseId,
-                          };
-                        },
-                      ),
-                    )
-                    ?.flat(100)
-                    ?.filter(Boolean),
+                        )
+                          return undefined;
+                        return {
+                          name: run?.text,
+                          browseId:
+                            run?.navigationEndpoint?.browseEndpoint?.browseId,
+                        };
+                      })
+                      .filter(Boolean),
                   duration: null,
+                  explicit:
+                    data?.musicResponsiveListItemRenderer?.badges?.some(
+                      (badge: any) =>
+                        badge?.musicInlineBadgeRenderer?.accessibilityData
+                          ?.accessibilityData?.label === "Explicit",
+                    ) ?? false,
                   listId:
                     data?.musicResponsiveListItemRenderer?.flexColumns[0]
                       ?.musicResponsiveListItemFlexColumnRenderer?.text?.runs[0]
@@ -126,6 +115,7 @@ export default function extractArtistData(channelObject: any): ArtistData {
               }),
             };
           }
+          // album | single & EP | playlist | video | artist
           if (data?.musicCarouselShelfRenderer) {
             const headerTitle =
               data?.musicCarouselShelfRenderer?.header
@@ -150,8 +140,8 @@ export default function extractArtistData(channelObject: any): ArtistData {
                     title: data?.musicTwoRowItemRenderer?.title?.runs[0]?.text,
                     subtitle: data?.musicTwoRowItemRenderer?.subtitle?.runs
                       ?.map((data: any) => data?.text?.trim())
-                      .flat(100)
-                      ?.filter((data: any) => data.trim() !== ","),
+                      .join(" ")
+                      .replace(/^(Album|Playlist|Artist) • /, ""),
                     thumbnail:
                       data?.musicTwoRowItemRenderer?.thumbnailRenderer
                         ?.musicThumbnailRenderer?.thumbnail?.thumbnails[1]
@@ -172,9 +162,14 @@ export default function extractArtistData(channelObject: any): ArtistData {
                             run?.navigationEndpoint?.browseEndpoint?.browseId,
                         };
                       })
-                      .flat(100)
                       ?.filter(Boolean),
                     duration: null,
+                    explicit:
+                      data?.musicTwoRowItemRenderer?.subtitleBadges?.some(
+                        (badge: any) =>
+                          badge?.musicInlineBadgeRenderer?.accessibilityData
+                            ?.accessibilityData?.label === "Explicit",
+                      ) ?? false,
                     listId:
                       data?.musicTwoRowItemRenderer?.navigationEndpoint
                         ?.watchEndpoint?.playlistId || null,

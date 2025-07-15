@@ -1,11 +1,9 @@
 import { Track } from "../types";
 import { Link } from "react-router";
 import usePlayer from "../hooks/usePlayer";
-import explicitIco from "../assets/explicit.svg";
 
 type SongItemType = Track & {
   index?: string;
-  explicit?: boolean;
 };
 
 export default function SongItem({
@@ -26,6 +24,7 @@ export default function SongItem({
       title,
       thumbnail,
       artists,
+      explicit,
       duration,
       listId,
     });
@@ -205,7 +204,17 @@ export default function SongItem({
       <div>
         <p className="font-semibold leading-tight line-clamp-1">{title}</p>
         <div className="flex items-center gap-2">
-          {explicit && <img src={explicitIco} className="w-5" />}
+          {explicit && (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 -960 960 960"
+              width="24px"
+              className="w-5 shrink-0 aspect-square fill-themed-text-muted"
+            >
+              <path d="M360-280h240v-80H440v-80h160v-80H440v-80h160v-80H360v400ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Z" />
+            </svg>
+          )}
           {artists.map((artist) => (
             <Link
               key={artist.browseId}
