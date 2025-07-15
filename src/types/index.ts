@@ -9,9 +9,8 @@ export interface Track {
 
 export interface MixContent {
   headerTitle: string;
-  contents: Track &
-    {
-      subtitle: string;
-      type: string;
-    }[];
+  contents: (Track & {
+    subtitle: string;
+    type: string;
+  })[];
 }
