@@ -15,24 +15,23 @@ export default function Artist() {
   return (
     <div className="flex flex-col h-full overflow-y-scroll">
       {artistData && (
-        <section className="relative">
-          {artistData.thumbnail && (
-            <img
-              className="object-cover object-center w-full min-h-[35dvh]"
-              src={artistData.thumbnail}
-              alt={artistData.artistName}
-            />
-          )}
-          <div className="bg-gradient-to-b from-transparent to-[#000] absolute inset-0"></div>
-          <div className="absolute flex flex-col justify-end items-center lg:items-start inset-0 lg:px-6 xl:px-10 p-4">
-            <div className="flex gap-4 items-center justify-end">
-              <Avatar avatar={artistData.avatar} />
-              <h1 className="font-bold lg:font-black text-4xl lg:text-6xl lg:mb-2">
-                {artistData.artistName}
-              </h1>
-            </div>
-            <div className="hidden md:block w-2/3">
-              <CollapsibleText>{artistData.description}</CollapsibleText>
+        <section
+          className="grow bg-center bg-cover"
+          style={{
+            backgroundImage: `url(${artistData.thumbnail})`,
+          }}
+        >
+          <div className="bg-gradient-to-b from-transparent to-themed-bg flex flex-col pt-28">
+            <div className="px-4 py-6 flex flex-col lg:p-8">
+              <div className="flex gap-4 items-center">
+                <Avatar avatar={artistData.avatar} />
+                <h1 className="font-bold lg:font-black text-4xl lg:text-6xl mb-2 lg:mb-4">
+                  {artistData.artistName}
+                </h1>
+              </div>
+              <div className="w-2/3 text-sm cursor-pointer">
+                <CollapsibleText>{artistData.description}</CollapsibleText>
+              </div>
             </div>
           </div>
         </section>

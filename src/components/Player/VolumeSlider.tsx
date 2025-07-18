@@ -1,4 +1,4 @@
-import { forwardRef, useCallback, useEffect, useState } from "react";
+import { forwardRef, useCallback, useState } from "react";
 
 const VolumeSlider = forwardRef<HTMLAudioElement, {}>((_, ref) => {
   const audioRef = ref as React.RefObject<HTMLAudioElement>;
@@ -22,50 +22,6 @@ const VolumeSlider = forwardRef<HTMLAudioElement, {}>((_, ref) => {
     },
     [audioRef, volume],
   );
-
-  const volumeKey = useCallback(
-    (e: KeyboardEvent, key: "arrowdown" | "arrowup") => {
-      const audio = audioRef.current;
-      if (!audio) return;
-      if (isMuted) {
-        handleMute(e);
-        return;
-      }
-      let newVolume: number;
-      if (key === "arrowdown") {
-        newVolume = Math.max(parseFloat((audio.volume - 0.1).toFixed(2)), 0);
-      } else if (key === "arrowup") {
-        newVolume = Math.min(parseFloat((audio.volume + 0.1).toFixed(2)), 1);
-      } else {
-        newVolume = 1;
-      }
-      setVolume(newVolume);
-      audio.volume = newVolume;
-    },
-    [audioRef, isMuted],
-  );
-
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      switch (e.key.toLowerCase()) {
-        case "m":
-          handleMute(e);
-          break;
-        case "arrowup":
-          volumeKey(e, "arrowup");
-          break;
-        case "arrowdown":
-          volumeKey(e, "arrowdown");
-          break;
-        default:
-          break;
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [isMuted, handleMute, volumeKey]);
 
   return (
     <div className="flex items-center gap-2">
@@ -107,11 +63,11 @@ const VolumeSlider = forwardRef<HTMLAudioElement, {}>((_, ref) => {
         value={isMuted ? 0 : volume}
         onChange={(e) => {
           e.stopPropagation();
-
           const audio = audioRef.current;
           if (!audio) return;
-          audio.volume = parseFloat(e.currentTarget.value);
-          setVolume(audio.volume);
+          const newVolume = parseFloat(e.currentTarget.value);
+          audio.volume = newVolume;
+          setVolume(newVolume);
         }}
       />
     </div>
