@@ -11,7 +11,7 @@ export default function TopPanel() {
         const tag = target.tagName.toLowerCase();
 
         // Prevent dragging when clicking on interactive elements
-        const isInteractive = ["button", "svg", "path"].includes(tag);
+        const isInteractive = ["button", "svg", "path", "input"].includes(tag);
         if (!isInteractive) {
           getCurrentWindow().startDragging();
         }
@@ -74,15 +74,28 @@ function SearchBar() {
   }
 
   return (
-    <form className="flex gap-2 grow" onSubmit={handleSubmit}>
-      <input
-        type="text"
-        name="query"
-        placeholder="Find your favorite music"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        className="px-4 py-1.5 focus:outline-2 focus:outline-offset-1 focus:outline-themed-text-muted bg-themed-bg rounded-lg flex-1"
-      />
+    <form onSubmit={handleSubmit} className="grow">
+      <div className="flex items-center gap-2 bg-themed-bg rounded-md overflow-hidden focus-within:ring-2 focus-within:ring-themed-text-muted">
+        <input
+          id="query"
+          type="text"
+          name="query"
+          autoComplete="off"
+          placeholder="Find your favorite music"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          className="grow pl-4 pr-2 py-1 outline-none bg-transparent"
+        />
+        <button type="submit">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 512 512"
+            className="w-8 aspect-square fill-themed-text-muted pr-4"
+          >
+            <path d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6 .1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z" />
+          </svg>
+        </button>
+      </div>
     </form>
   );
 }
@@ -117,20 +130,28 @@ function NavigationHistory() {
 
   return (
     <div className="flex">
-      <button onClick={goBack} disabled={!canGoBack} className="w-9 p-2">
+      <button onClick={goBack} disabled={!canGoBack} className="w-9 px-2 py-1">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 -960 960 960"
-          className={`${canGoBack ? "fill-themed-text" : "fill-themed-text-muted"}`}
+          className={`${
+            canGoBack ? "fill-themed-text" : "fill-themed-text-muted"
+          }`}
         >
           <path d="m313-440 224 224-57 56-320-320 320-320 57 56-224 224h487v80H313Z" />
         </svg>
       </button>
-      <button onClick={goForward} disabled={!canGoForward} className="w-9 p-2">
+      <button
+        onClick={goForward}
+        disabled={!canGoForward}
+        className="w-9 px-2 py-1"
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 -960 960 960"
-          className={`${canGoForward ? "fill-themed-text" : "fill-themed-text-muted"}`}
+          className={`${
+            canGoForward ? "fill-themed-text" : "fill-themed-text-muted"
+          }`}
         >
           <path d="M647-440H160v-80h487L423-744l57-56 320 320-320 320-57-56 224-224Z" />
         </svg>
