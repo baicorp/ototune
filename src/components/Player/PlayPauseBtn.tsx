@@ -42,7 +42,7 @@ const PlayPauseButton = forwardRef<HTMLAudioElement, {}>((_, ref) => {
 
   return (
     <button
-      className="px-5 rounded-full bg-themed-border shadow shadow-[rgba(255, 255, 255, 0.05) 0px 0px 0px 1px inset] flex justify-center items-center"
+      className="px-5 rounded-full bg-themed-border/90 hover:bg-themed-border shadow shadow-[rgba(255, 255, 255, 0.05) 0px 0px 0px 1px inset] flex justify-center items-center"
       onClick={handlePlayPause}
     >
       {isLoading ? (

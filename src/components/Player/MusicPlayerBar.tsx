@@ -64,7 +64,7 @@ function PlayerInfo({ currentTrack }: Pick<TrackState, "currentTrack">) {
                     key={artist.browseId}
                     to={`/artist/${artist.browseId}`}
                     onClick={(e) => e.stopPropagation()}
-                    className="cursor-pointer text-themed-text-muted text-nowrap text-sm line-clamp-1"
+                    className="text-themed-text-muted text-nowrap text-sm line-clamp-1"
                   >
                     {artist.name}
                   </Link>
