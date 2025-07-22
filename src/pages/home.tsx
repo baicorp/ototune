@@ -5,7 +5,11 @@ import DynamicComponent from "../components/DynamicComp";
 import CategoryListLayout from "../components/CategoryListLayout";
 
 export default function Home() {
-  const { data: homeData, error, isLoading } = useSWR("home-page", home);
+  const {
+    data: homeData,
+    error,
+    isLoading,
+  } = useSWR("home-page", home, { revalidateOnMount: true });
 
   if (isLoading) return <p>Loading...</p>;
 

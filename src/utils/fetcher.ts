@@ -1,9 +1,10 @@
-import { MixContent } from "../types";
+import { MixContent, Track } from "../types";
 import { invoke } from "@tauri-apps/api/core";
 import extractHomeData from "./extractor/extractHomeData";
 import extractExploreData from "./extractor/extractExplore";
 import extractAlbumData from "./extractor/extractAlbumData";
 import extractSearchData from "./extractor/extractSearchData";
+import extractHomeDataTest from "./extractor/extractHomeTest";
 import extractArtistData from "./extractor/extractArtistData";
 import extractPlaylistData from "./extractor/extractPlaylistData";
 import extractMoodsGnereCategory from "./extractor/extractMooodsGenres";
@@ -11,6 +12,7 @@ import {
   extractLyricsBrowseId,
   extractLyricsData,
 } from "./extractor/extractLyrics";
+import extractQueueData from "./extractor/extractQueuedata";
 
 export async function search(query: string): Promise<MixContent[] | undefined> {
   try {
@@ -25,7 +27,13 @@ export async function search(query: string): Promise<MixContent[] | undefined> {
 
 export async function home(): Promise<MixContent[] | undefined> {
   try {
-    let { local, global } = await invoke<any>("get_home");
+    const [dataOne, dataTwo] = await Promise.all([
+      invoke<MixContent[]>("get_home_test"),
+      invoke<{ local: MixContent[]; global: MixContent[] }>("get_home"),
+    ]);
+    const recomendation = extractHomeDataTest(dataOne);
+
+    let { local, global } = dataTwo;
     local = extractHomeData(local);
     global = extractHomeData(global);
     const homeData = [
@@ -37,6 +45,7 @@ export async function home(): Promise<MixContent[] | undefined> {
         headerTitle: "Global " + global[0].headerTitle,
         contents: global[0].contents,
       },
+      ...recomendation,
     ];
     return homeData;
   } catch (e: any) {
@@ -115,6 +124,46 @@ export async function getLyrics(id: string): Promise<string> {
       browseId: lyricsBrowseId,
     });
     return extractLyricsData(rawLyricsContent);
+  } catch (e: any) {
+    throw new Error(e);
+  }
+}
+
+export async function getAudioUrl(id: Track["id"]) {
+  // fetch the track url stream based on given id (not yet implemented)
+  try {
+    const audioUrl = await invoke<string>("get_audio_url", {
+      videoId: id,
+    });
+    return audioUrl;
+  } catch (e: any) {
+    throw new Error(e);
+  }
+}
+
+export async function createTrackHistory(id: Track["id"]) {
+  // fetch the track url stream based on given id (not yet implemented)
+  try {
+    const audioUrl = await invoke<string>("generate_track_history", {
+      videoId: id,
+    });
+    return audioUrl;
+  } catch (e: any) {
+    throw new Error(e);
+  }
+}
+
+export async function getQueue(id: Track["id"], listId: Track["listId"]) {
+  // fetch queue list based on given id && listId(optional)
+  try {
+    let queueList = await invoke<ReturnType<typeof extractQueueData>>(
+      "get_queue_list",
+      {
+        videoId: id,
+        playlistId: listId,
+      },
+    );
+    return extractQueueData(queueList);
   } catch (e: any) {
     throw new Error(e);
   }

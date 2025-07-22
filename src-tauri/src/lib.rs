@@ -4,9 +4,90 @@ use reqwest::header::{
     HeaderMap, HeaderValue, ACCEPT, ACCEPT_ENCODING, ACCEPT_LANGUAGE, CONTENT_TYPE, HOST, ORIGIN,
     REFERER, USER_AGENT,
 };
+use serde::{Deserialize, Serialize};
 use serde_json::json;
 use std::env;
+use std::fs;
+use std::path::PathBuf;
+use tauri::Manager;
 use tauri_plugin_shell::{process::CommandEvent, ShellExt};
+#[derive(Serialize, Deserialize)]
+struct UserData {
+    visitor_data: String,
+}
+
+fn get_user_file_path(app_handle: &tauri::AppHandle) -> PathBuf {
+    let path = app_handle
+        .path()
+        .app_config_dir()
+        .expect("Failed to resolve app config dir");
+
+    std::fs::create_dir_all(&path).expect("Failed to create config dir");
+
+    path.join("user.json")
+}
+
+async fn fetch_visitor_data_from_youtube() -> Result<String, String> {
+    let client = reqwest::Client::new();
+    let headers = build_headers();
+
+    let payload = json!({
+        "browseId": "FEmusic_home",
+        "context": {
+            "client": {
+                "clientName": "WEB_REMIX",
+                "clientVersion": "1.20220918",
+            }
+        },
+        "racyCheckOk": true,
+        "contentCheckOk": true
+    });
+
+    let response = client
+        .post(yt_url("browse"))
+        .headers(headers)
+        .json(&payload)
+        .send()
+        .await
+        .map_err(|e| format!("Request failed: {}", e))?;
+
+    let json_data = response
+        .json::<serde_json::Value>()
+        .await
+        .map_err(|e| format!("Invalid JSON: {}", e))?;
+
+    let visitor_data = json_data
+        .get("responseContext")
+        .and_then(|ctx| ctx.get("visitorData"))
+        .and_then(|v| v.as_str())
+        .ok_or("visitorData not found in response")?;
+
+    Ok(visitor_data.to_string())
+}
+
+pub async fn get_or_create_visitor_data(app: &tauri::AppHandle) -> Result<String, String> {
+    let path = get_user_file_path(app);
+
+    // Try to read from existing file
+    if let Ok(content) = fs::read_to_string(&path) {
+        if let Ok(user_data) = serde_json::from_str::<UserData>(&content) {
+            return Ok(user_data.visitor_data);
+        }
+    }
+
+    // If not found, fetch from YouTube
+    let visitor_data = fetch_visitor_data_from_youtube().await?;
+
+    // Save locally
+    let user_data = UserData {
+        visitor_data: visitor_data.clone(),
+    };
+    if let Ok(serialized) = serde_json::to_string_pretty(&user_data) {
+        let _ = fs::write(&path, serialized);
+    }
+
+    Ok(visitor_data)
+}
 
 fn build_headers() -> HeaderMap {
     let mut headers = HeaderMap::new();
@@ -41,15 +122,50 @@ fn yt_url(endpoint: &str) -> String {
 }
 
 #[tauri::command]
-async fn get_home() -> Result<serde_json::Value, String> {
+async fn get_home_test(app: tauri::AppHandle) -> Result<serde_json::Value, String> {
     let client = reqwest::Client::new();
     let headers = build_headers();
+    let visitor_data = get_or_create_visitor_data(&app).await?;
 
     let base_payload = serde_json::json!({
+        "browseId": "FEmusic_home",
         "context": {
             "client": {
                 "clientName": "WEB_REMIX",
-                "clientVersion": "1.20220918"
+                "clientVersion": "1.20220918",
+                "visitorData": visitor_data
+            }
+        },
+        "racyCheckOk": true,
+        "contentCheckOk": true
+    });
+
+    let res = client
+        .post(yt_url("browse"))
+        .headers(headers)
+        .json(&base_payload)
+        .send()
+        .await
+        .map_err(|e| e.to_string())?;
+
+    res.json::<serde_json::Value>()
+        .await
+        .map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+async fn get_home(app: tauri::AppHandle) -> Result<serde_json::Value, String> {
+    let client = reqwest::Client::new();
+    let headers = build_headers();
+    let visitor_data = get_or_create_visitor_data(&app).await?;
+
+    let base_payload = serde_json::json!({
+        "browseId": "FEmusic_home",
+        "context": {
+            "client": {
+                "clientName": "WEB_REMIX",
+                "clientVersion": "1.20220918",
+                "visitorData": visitor_data
             }
         },
         "racyCheckOk": true,
@@ -100,16 +216,18 @@ async fn get_home() -> Result<serde_json::Value, String> {
 }
 
 #[tauri::command]
-async fn search(query: String) -> Result<serde_json::Value, String> {
+async fn search(app: tauri::AppHandle, query: String) -> Result<serde_json::Value, String> {
     let client = reqwest::Client::new();
     let headers = build_headers();
+    let visitor_data = get_or_create_visitor_data(&app).await?;
 
     let body = json!({
         "query": query,
         "context": {
             "client": {
                 "clientName": "WEB_REMIX",
-                "clientVersion": "1.20220918"
+                "clientVersion": "1.20220918",
+                "visitorData": visitor_data
             }
         },
         "racyCheckOk": true,
@@ -130,16 +248,18 @@ async fn search(query: String) -> Result<serde_json::Value, String> {
 }
 
 #[tauri::command]
-async fn get_album(browse_id: String) -> Result<serde_json::Value, String> {
+async fn get_album(app: tauri::AppHandle, browse_id: String) -> Result<serde_json::Value, String> {
     let client = reqwest::Client::new();
     let headers = build_headers();
+    let visitor_data = get_or_create_visitor_data(&app).await?;
 
     let body = json!({
         "browseId": browse_id,
         "context": {
             "client": {
                 "clientName": "WEB_REMIX",
-                "clientVersion": "1.20220918"
+                "clientVersion": "1.20220918",
+                "visitorData": visitor_data
             }
         },
         "racyCheckOk": true,
@@ -160,16 +280,21 @@ async fn get_album(browse_id: String) -> Result<serde_json::Value, String> {
 }
 
 #[tauri::command]
-async fn get_playlist(browse_id: String) -> Result<serde_json::Value, String> {
+async fn get_playlist(
+    app: tauri::AppHandle,
+    browse_id: String,
+) -> Result<serde_json::Value, String> {
     let client = reqwest::Client::new();
     let headers = build_headers();
+    let visitor_data = get_or_create_visitor_data(&app).await?;
 
     let body = json!({
         "browseId": browse_id,
         "context": {
             "client": {
                 "clientName": "WEB_REMIX",
-                "clientVersion": "1.20220918"
+                "clientVersion": "1.20220918",
+                "visitorData": visitor_data
             }
         },
         "racyCheckOk": true,
@@ -190,16 +315,53 @@ async fn get_playlist(browse_id: String) -> Result<serde_json::Value, String> {
 }
 
 #[tauri::command]
-async fn get_artist(browse_id: String) -> Result<serde_json::Value, String> {
+async fn generate_track_history(
+    app: tauri::AppHandle,
+    video_id: String,
+) -> Result<serde_json::Value, String> {
     let client = reqwest::Client::new();
     let headers = build_headers();
+    let visitor_data = get_or_create_visitor_data(&app).await?;
+
+    let body = json!({
+        "videoId": video_id,
+        "context": {
+            "client": {
+                "clientName": "WEB_REMIX",
+                "clientVersion": "1.20220918",
+                "visitorData": visitor_data
+            }
+        },
+        "racyCheckOk": true,
+        "contentCheckOk": true
+    });
+
+    let res = client
+        .post(yt_url("player"))
+        .headers(headers)
+        .json(&body)
+        .send()
+        .await
+        .map_err(|e| e.to_string())?;
+
+    res.json::<serde_json::Value>()
+        .await
+        .map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+async fn get_artist(app: tauri::AppHandle, browse_id: String) -> Result<serde_json::Value, String> {
+    let client = reqwest::Client::new();
+    let headers = build_headers();
+    let visitor_data = get_or_create_visitor_data(&app).await?;
 
     let body = serde_json::json!({
         "browseId": browse_id,
         "context": {
             "client": {
                 "clientName": "WEB_REMIX",
-                "clientVersion": "1.20220918"
+                "clientVersion": "1.20220918",
+                "visitorData": visitor_data
             }
         },
         "racyCheckOk": true,
@@ -221,11 +383,13 @@ async fn get_artist(browse_id: String) -> Result<serde_json::Value, String> {
 
 #[tauri::command]
 async fn get_queue_list(
+    app: tauri::AppHandle,
     video_id: String,
     playlist_id: Option<String>,
 ) -> Result<serde_json::Value, String> {
     let client = reqwest::Client::new();
     let headers = build_headers();
+    let visitor_data = get_or_create_visitor_data(&app).await?;
 
     let final_playlist_id = playlist_id.unwrap_or_else(|| format!("RDAMVM{}", video_id));
 
@@ -235,7 +399,8 @@ async fn get_queue_list(
         "context": {
             "client": {
                 "clientName": "WEB_REMIX",
-                "clientVersion": "1.20220918"
+                "clientVersion": "1.20220918",
+                "visitorData": visitor_data
             }
         },
         "racyCheckOk": true,
@@ -256,16 +421,18 @@ async fn get_queue_list(
 }
 
 #[tauri::command]
-async fn explore() -> Result<serde_json::Value, String> {
+async fn explore(app: tauri::AppHandle) -> Result<serde_json::Value, String> {
     let client = reqwest::Client::new();
     let headers = build_headers();
+    let visitor_data = get_or_create_visitor_data(&app).await?;
 
     let payload = serde_json::json!({
         "browseId": "FEmusic_moods_and_genres",
         "context": {
             "client": {
                 "clientName": "WEB_REMIX",
-                "clientVersion": "1.20220918"
+                "clientVersion": "1.20220918",
+                "visitorData": visitor_data
             }
         },
         "racyCheckOk": true,
@@ -286,9 +453,13 @@ async fn explore() -> Result<serde_json::Value, String> {
 }
 
 #[tauri::command]
-async fn moods_genre_category(params: Option<String>) -> Result<serde_json::Value, String> {
+async fn moods_genre_category(
+    app: tauri::AppHandle,
+    params: Option<String>,
+) -> Result<serde_json::Value, String> {
     let client = reqwest::Client::new();
     let headers = build_headers();
+    let visitor_data = get_or_create_visitor_data(&app).await?;
 
     let payload = serde_json::json!({
         "browseId": "FEmusic_moods_and_genres_category",
@@ -296,7 +467,8 @@ async fn moods_genre_category(params: Option<String>) -> Result<serde_json::Valu
         "context": {
             "client": {
                 "clientName": "WEB_REMIX",
-                "clientVersion": "1.20220918"
+                "clientVersion": "1.20220918",
+                "visitorData": visitor_data
             }
         },
         "racyCheckOk": true,
@@ -317,16 +489,21 @@ async fn moods_genre_category(params: Option<String>) -> Result<serde_json::Valu
 }
 
 #[tauri::command]
-async fn get_lyrics_browse_id(video_id: String) -> Result<serde_json::Value, String> {
+async fn get_lyrics_browse_id(
+    app: tauri::AppHandle,
+    video_id: String,
+) -> Result<serde_json::Value, String> {
     let client = reqwest::Client::new();
     let headers = build_headers();
+    let visitor_data = get_or_create_visitor_data(&app).await?;
 
     let body = serde_json::json!({
         "videoId": video_id,
         "context": {
             "client": {
                 "clientName": "WEB_REMIX",
-                "clientVersion": "1.20220918"
+                "clientVersion": "1.20220918",
+                "visitorData": visitor_data
             }
         },
         "racyCheckOk": true,
@@ -347,16 +524,21 @@ async fn get_lyrics_browse_id(video_id: String) -> Result<serde_json::Value, Str
 }
 
 #[tauri::command]
-async fn get_lyrics_content(browse_id: String) -> Result<serde_json::Value, String> {
+async fn get_lyrics_content(
+    app: tauri::AppHandle,
+    browse_id: String,
+) -> Result<serde_json::Value, String> {
     let client = reqwest::Client::new();
     let headers = build_headers();
+    let visitor_data = get_or_create_visitor_data(&app).await?;
 
     let body = serde_json::json!({
         "browseId": browse_id,
         "context": {
             "client": {
                 "clientName": "WEB_REMIX",
-                "clientVersion": "1.20220918"
+                "clientVersion": "1.20220918",
+                "visitorData": visitor_data
             }
         },
         "racyCheckOk": true,
@@ -405,6 +587,7 @@ async fn get_audio_url(app: tauri::AppHandle, video_id: String) -> String {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_sql::Builder::new().build())
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
@@ -418,6 +601,8 @@ pub fn run() {
             moods_genre_category,
             get_lyrics_browse_id,
             get_lyrics_content,
+            get_home_test,
+            generate_track_history,
             get_audio_url
         ])
         .run(tauri::generate_context!())

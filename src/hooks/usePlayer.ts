@@ -2,7 +2,7 @@ import { toast } from "sonner";
 import { create } from "zustand";
 import { Track } from "../types";
 import { invoke } from "@tauri-apps/api/core";
-import extractQueueData from "../utils/extractor/extractQueuedata";
+import { createTrackHistory, getAudioUrl, getQueue } from "../utils/fetcher";
 
 export interface TrackState {
   currentTrack:
@@ -25,34 +25,6 @@ export interface TrackState {
 
   nextTrack: () => void;
   prevTrack: () => void;
-}
-
-async function getAudioUrl(id: Track["id"]) {
-  // fetch the track url stream based on given id (not yet implemented)
-  try {
-    const audioUrl = await invoke<string>("get_audio_url", {
-      videoId: id,
-    });
-    return audioUrl;
-  } catch (e: any) {
-    throw new Error(e);
-  }
-}
-
-async function getQueue(id: Track["id"], listId: Track["listId"]) {
-  // fetch queue list based on given id && listId(optional)
-  try {
-    let queueList = await invoke<ReturnType<typeof extractQueueData>>(
-      "get_queue_list",
-      {
-        videoId: id,
-        playlistId: listId,
-      },
-    );
-    return extractQueueData(queueList);
-  } catch (e: any) {
-    throw new Error(e);
-  }
 }
 
 const usePlayer = create<TrackState>()((set, get) => ({
@@ -79,6 +51,7 @@ const usePlayer = create<TrackState>()((set, get) => ({
         const [audioUrl, queueList] = await Promise.all([
           getAudioUrl(id),
           getQueue(id, listId),
+          createTrackHistory(id),
         ]);
         currentTrackUrlStream = audioUrl;
         trackQueue = queueList;
