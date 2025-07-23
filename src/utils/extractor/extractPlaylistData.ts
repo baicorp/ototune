@@ -1,13 +1,7 @@
+import { LibraryHeaderProps } from "../../components/Library";
 import { Track } from "../../types";
 
-interface PlaylistData {
-  title: string;
-  subtitle: string;
-  thumbnail: string;
-  playlistStat: string;
-  description: string;
-  tracks: Track[];
-}
+export type PlaylistData = Omit<LibraryHeaderProps, "artists">;
 
 export default function extractPlaylistData(playlistObject: any): PlaylistData {
   const playlist =
@@ -31,12 +25,15 @@ export default function extractPlaylistData(playlistObject: any): PlaylistData {
         ?.url ||
       playlist?.thumbnail?.musicThumbnailRenderer?.thumbnail?.thumbnails[0]
         ?.url,
-    playlistStat: playlist?.secondSubtitle?.runs
+    stat: playlist?.secondSubtitle?.runs
       ?.map((data: any) => data?.text)
       ?.join(""),
     description:
       playlist?.description?.musicDescriptionShelfRenderer?.description?.runs[0]
         ?.text,
+    explicit: false,
+    play: playlist?.buttons[1]?.musicPlayButtonRenderer?.playNavigationEndpoint
+      ?.watchPlaylistEndpoint?.playlistId,
     tracks: contents
       ?.map((data: any) => {
         const dataItem = data?.musicResponsiveListItemRenderer;

@@ -1,14 +1,7 @@
+import { LibraryHeaderProps } from "../../components/Library";
 import { Track } from "../../types";
 
-interface AlbumData {
-  title: string;
-  subtitle: string;
-  thumbnail: string;
-  albumStat: string;
-  description: string;
-  artists: { name: string; browseId: string }[];
-  tracks: Track[];
-}
+export type AlbumData = LibraryHeaderProps;
 
 export default function extractAlbumData(albumDataObject: any): AlbumData {
   const album =
@@ -26,12 +19,15 @@ export default function extractAlbumData(albumDataObject: any): AlbumData {
       album?.thumbnail?.musicThumbnailRenderer?.thumbnail?.thumbnails[2]?.url ||
       album?.thumbnail?.musicThumbnailRenderer?.thumbnail?.thumbnails[1]?.url ||
       album?.thumbnail?.musicThumbnailRenderer?.thumbnail?.thumbnails[0]?.url,
-    albumStat: album?.secondSubtitle?.runs
-      ?.map((data: any) => data?.text)
-      ?.join(""),
+    stat: album?.secondSubtitle?.runs?.map((data: any) => data?.text)?.join(""),
     description:
       album?.description?.musicDescriptionShelfRenderer?.description?.runs[0]
         ?.text,
+    explicit:
+      !!album?.subtitleBadge?.[0]?.musicInlineBadgeRenderer?.accessibilityData
+        ?.accessibilityData?.label,
+    play: album?.buttons[1]?.musicPlayButtonRenderer?.playNavigationEndpoint
+      ?.watchPlaylistEndpoint?.playlistId,
     artists: album?.straplineTextOne?.runs
       ?.map((run: any) => {
         if (run?.navigationEndpoint?.browseEndpoint) {

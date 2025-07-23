@@ -1,13 +1,17 @@
+import { Track } from "../types";
 import { Link } from "react-router";
 import CollapsibleText from "./CollapsibleText";
 
-interface LibraryHeaderProps {
-  thumbnail: string;
+export interface LibraryProps {
   title: string;
   subtitle: string;
+  thumbnail: string;
   stat?: string;
   description: string;
+  explicit: boolean;
+  play: string;
   artists?: { name: string; browseId: string }[];
+  tracks: Track[];
 }
 
 // provide header for album dan playlist page
@@ -17,9 +21,12 @@ export default function LibraryHeader({
   subtitle,
   stat,
   description,
+  explicit,
   artists,
+  tracks,
+  play,
   children,
-}: LibraryHeaderProps & { children: React.ReactNode }) {
+}: LibraryProps & { children: React.ReactNode }) {
   return (
     <>
       <header className="flex flex-col items-center gap-3 cursor-default mt-4 mb-6">
@@ -43,10 +50,22 @@ export default function LibraryHeader({
                 </Link>
               ))}
           </div>
-          <div className="text-center">
-            <p className="text-themed-text-muted leading-snug">{subtitle}</p>
+          <div className="flex flex-col items-center">
+            <div className="flex gap-1.5 items-center">
+              {explicit && (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 -960 960 960"
+                  className="w-5 shrink-0 aspect-square fill-themed-text-muted"
+                >
+                  <path d="M360-280h240v-80H440v-80h160v-80H440v-80h160v-80H360v400ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Z" />
+                </svg>
+              )}
+              <p className="text-themed-text-muted leading-snug">{subtitle}</p>
+            </div>
             <p className="text-themed-text-muted leading-snug">{stat}</p>
           </div>
+          <Play />
         </div>
       </header>
       <section>{children}</section>
@@ -57,5 +76,19 @@ export default function LibraryHeader({
         </footer>
       )}
     </>
+  );
+}
+
+function Play() {
+  return (
+    <button title="play" className="p-4 rounded-full bg-white text-themed-bg">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 -960 960 960"
+        className="w-8 aspect-square fill-themed-bg"
+      >
+        <path d="M320-200v-560l440 280-440 280Z" />
+      </svg>
+    </button>
   );
 }
