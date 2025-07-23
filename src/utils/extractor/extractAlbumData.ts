@@ -1,7 +1,7 @@
-import { LibraryHeaderProps } from "../../components/Library";
+import { LibraryProps } from "../../components/Library";
 import { Track } from "../../types";
 
-export type AlbumData = LibraryHeaderProps;
+export type AlbumData = LibraryProps;
 
 export default function extractAlbumData(albumDataObject: any): AlbumData {
   const album =

@@ -1,7 +1,7 @@
-import { LibraryHeaderProps } from "../../components/Library";
+import { LibraryProps } from "../../components/Library";
 import { Track } from "../../types";
 
-export type PlaylistData = Omit<LibraryHeaderProps, "artists">;
+export type PlaylistData = Omit<LibraryProps, "artists">;
 
 export default function extractPlaylistData(playlistObject: any): PlaylistData {
   const playlist =
