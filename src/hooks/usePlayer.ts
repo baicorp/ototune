@@ -1,8 +1,7 @@
 import { toast } from "sonner";
 import { create } from "zustand";
 import { Track } from "../types";
-import { invoke } from "@tauri-apps/api/core";
-import { createTrackHistory, getAudioUrl, getQueue } from "../utils/fetcher";
+import { getAudioUrl, getQueue, getTrackData } from "../utils/fetcher";
 
 export interface TrackState {
   currentTrack:
@@ -22,6 +21,8 @@ export interface TrackState {
     duration,
     listId,
   }: Track) => void;
+
+  setTrackFromButton: (id: string, listId: string) => void;
 
   nextTrack: () => void;
   prevTrack: () => void;
@@ -48,22 +49,23 @@ const usePlayer = create<TrackState>()((set, get) => ({
 
       try {
         set({ isLoading: true });
-        const [audioUrl, queueList] = await Promise.all([
+        const [audioUrl, queueList, _] = await Promise.all([
           getAudioUrl(id),
           getQueue(id, listId),
-          createTrackHistory(id),
+          getTrackData(id), // mimic create watch history for personalize recomendation
         ]);
         currentTrackUrlStream = audioUrl;
         trackQueue = queueList;
-        set({ isLoading: false });
       } catch (e: any) {
         toast.error("failed to fetch this track");
-        set({ isLoading: false });
         return;
+      } finally {
+        set({ isLoading: false });
       }
 
       // get track index from queue list
       const index = trackQueue.findIndex((queue) => queue.id === props.id);
+
       set({
         currentTrack: {
           ...props,
@@ -80,18 +82,20 @@ const usePlayer = create<TrackState>()((set, get) => ({
       try {
         // fetch the track url stream based on given id
         set({ isLoading: true });
-        const audioUrl = await invoke<string>("get_audio_url", {
-          videoId: props.id,
-        });
-        set({ isLoading: false });
+        const [audioUrl, _] = await Promise.all([
+          getAudioUrl(id),
+          getTrackData(id), // mimic create watch history for personalize recomendation
+        ]);
         currentTrackUrlStream = audioUrl;
       } catch (e: any) {
         toast.error("failed to fetch this track");
-        set({ isLoading: false });
         return;
+      } finally {
+        set({ isLoading: false });
       }
       // get track index from queue list
       const index = trackQueue.findIndex((queue) => queue.id === id);
+
       set({
         currentTrack: {
           ...props,
@@ -111,6 +115,56 @@ const usePlayer = create<TrackState>()((set, get) => ({
         await fetchFreshTrack(props.id, props.listId);
       }
     }
+  },
+
+  // start play track when user click suffle, radio, play button
+  async setTrackFromButton(id: string, listId: string) {
+    set({
+      currentTrack: {
+        id,
+        artists: [],
+        duration: null,
+        explicit: false,
+        listId,
+        title: "",
+        thumbnail: undefined,
+        currentTrackIndex: -1,
+        currentTrackUrlStream: "",
+      },
+    });
+
+    let currentTrackUrlStream: string | undefined,
+      trackQueue: Track[],
+      track: Track;
+    try {
+      // fetch the track url stream based on given id
+      set({ isLoading: true });
+      const [audioUrl, queueList, trackDetails] = await Promise.all([
+        getAudioUrl(id),
+        getQueue(id, listId),
+        getTrackData(id), // get track detail for musicPlayerBar info
+      ]);
+      currentTrackUrlStream = audioUrl;
+      trackQueue = queueList;
+      track = { ...trackDetails, listId };
+    } catch (e: any) {
+      toast.error("failed to fetch this track");
+      return;
+    } finally {
+      set({ isLoading: false });
+    }
+
+    // get track index from queue list
+    const index = trackQueue.findIndex((queue) => queue.id === id);
+
+    set({
+      currentTrack: {
+        ...track,
+        currentTrackIndex: index,
+        currentTrackUrlStream,
+      },
+      trackQueue,
+    });
   },
 
   async nextTrack() {

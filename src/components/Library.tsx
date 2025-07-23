@@ -1,5 +1,6 @@
 import { Track } from "../types";
 import { Link } from "react-router";
+import usePlayer from "../hooks/usePlayer";
 import CollapsibleText from "./CollapsibleText";
 
 export interface LibraryProps {
@@ -65,7 +66,7 @@ export default function LibraryHeader({
             </div>
             <p className="text-themed-text-muted leading-snug">{stat}</p>
           </div>
-          <Play />
+          <Play id={tracks[0].id} play={play} />
         </div>
       </header>
       <section>{children}</section>
@@ -79,9 +80,16 @@ export default function LibraryHeader({
   );
 }
 
-function Play() {
+function Play({ id, play }: { id: string; play: string }) {
+  const { setTrackFromButton } = usePlayer();
   return (
-    <button title="play" className="p-4 rounded-full bg-white text-themed-bg">
+    <button
+      title="play"
+      onClick={() => {
+        setTrackFromButton(id, play);
+      }}
+      className="p-4 rounded-full bg-white hover:bg-white/95 text-themed-bg"
+    >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 -960 960 960"

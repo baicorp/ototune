@@ -315,7 +315,7 @@ async fn get_playlist(
 }
 
 #[tauri::command]
-async fn generate_track_history(
+async fn get_track_data(
     app: tauri::AppHandle,
     video_id: String,
 ) -> Result<serde_json::Value, String> {
@@ -601,7 +601,7 @@ pub fn run() {
             get_lyrics_browse_id,
             get_lyrics_content,
             get_home_test,
-            generate_track_history,
+            get_track_data,
             get_audio_url
         ])
         .run(tauri::generate_context!())

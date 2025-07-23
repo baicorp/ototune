@@ -1,5 +1,6 @@
 import useSWR from "swr";
 import { useParams } from "react-router";
+import usePlayer from "../hooks/usePlayer";
 import { getArtist } from "../utils/fetcher";
 import DynamicComponent from "../components/DynamicComp";
 import CollapsibleText from "../components/CollapsibleText";
@@ -35,8 +36,16 @@ export default function Artist() {
               </div>
               {(artistData.radio.videoId || artistData.suffle.videoId) && (
                 <div className="flex gap-2 mt-1">
-                  <StartButton type="suffle" />
-                  <StartButton type="radio" />
+                  <StartButton
+                    id={artistData.suffle.videoId}
+                    listId={artistData.suffle.listId}
+                    type="suffle"
+                  />
+                  <StartButton
+                    id={artistData.radio.videoId}
+                    listId={artistData.radio.listId}
+                    type="radio"
+                  />
                 </div>
               )}
             </div>
@@ -79,9 +88,23 @@ function Avatar({ avatar }: { avatar: string | undefined }) {
   );
 }
 
-function StartButton({ type }: { type: "suffle" | "radio" }) {
+function StartButton({
+  type,
+  id,
+  listId,
+}: {
+  type: "suffle" | "radio";
+  id: string;
+  listId: string;
+}) {
+  const { setTrackFromButton } = usePlayer();
   return (
-    <button className="bg-white hover:bg-white/90 text-themed-bg rounded-full font-semibold px-7 py-2 flex justify-center items-center gap-2.5">
+    <button
+      onClick={() => {
+        setTrackFromButton(id, listId);
+      }}
+      className="bg-white hover:bg-white/95 text-themed-bg rounded-full font-semibold px-7 py-2 flex justify-center items-center gap-2.5"
+    >
       {type === "radio" && (
         <svg
           xmlns="http://www.w3.org/2000/svg"

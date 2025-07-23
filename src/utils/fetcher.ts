@@ -3,6 +3,8 @@ import { invoke } from "@tauri-apps/api/core";
 import extractHomeData from "./extractor/extractHomeData";
 import extractExploreData from "./extractor/extractExplore";
 import extractAlbumData from "./extractor/extractAlbumData";
+import extractTrackData from "./extractor/extractTrackData";
+import extractQueueData from "./extractor/extractQueuedata";
 import extractSearchData from "./extractor/extractSearchData";
 import extractHomeDataTest from "./extractor/extractHomeTest";
 import extractArtistData from "./extractor/extractArtistData";
@@ -12,7 +14,6 @@ import {
   extractLyricsBrowseId,
   extractLyricsData,
 } from "./extractor/extractLyrics";
-import extractQueueData from "./extractor/extractQueuedata";
 
 export async function search(query: string): Promise<MixContent[] | undefined> {
   try {
@@ -141,13 +142,13 @@ export async function getAudioUrl(id: Track["id"]) {
   }
 }
 
-export async function createTrackHistory(id: Track["id"]) {
+export async function getTrackData(id: Track["id"]) {
   // fetch the track url stream based on given id (not yet implemented)
   try {
-    const audioUrl = await invoke<string>("generate_track_history", {
+    const track = await invoke<string>("get_track_data", {
       videoId: id,
     });
-    return audioUrl;
+    return extractTrackData(track);
   } catch (e: any) {
     throw new Error(e);
   }
