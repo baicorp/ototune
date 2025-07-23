@@ -7,7 +7,7 @@ function navClassName({ isActive }: { isActive: boolean }) {
 
 export default function LeftPanel() {
   return (
-    <nav className="md:w-52 lg:w-64 xl:w-72 sticky top-0 p-2 lg:p-4 border-r border-themed-border flex flex-col shrink-0">
+    <nav className="md:w-52 lg:w-64 xl:w-72 sticky top-0 p-2 lg:p-3 border-r border-themed-border flex flex-col shrink-0">
       <NavLink className={navClassName} to="/">
         <div className="w-13 p-3 shrink-0 aspect-square rounded-md overflow-hidden">
           <svg

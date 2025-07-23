@@ -21,7 +21,7 @@ export default function Artist() {
             backgroundImage: `url(${artistData.thumbnail})`,
           }}
         >
-          <div className="bg-gradient-to-b from-transparent to-themed-bg flex flex-col pt-28">
+          <div className="bg-gradient-to-b from-transparent to-themed-bg flex flex-col pt-32">
             <div className="px-4 py-6 flex flex-col lg:p-8">
               <div className="flex gap-4 items-center">
                 <Avatar avatar={artistData.avatar} />
@@ -29,7 +29,7 @@ export default function Artist() {
                   {artistData.artistName}
                 </h1>
               </div>
-              <div className="w-2/3 text-sm cursor-pointer">
+              <div className="w-2/3 cursor-pointer">
                 <CollapsibleText>{artistData.description}</CollapsibleText>
               </div>
             </div>

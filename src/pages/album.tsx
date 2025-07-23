@@ -23,8 +23,9 @@ export default function Album() {
             description={albumData.description}
             artists={albumData.artists}
             stat={albumData.albumStat}
-          />
-          <SongList tracks={albumData.tracks} variant="album" />
+          >
+            <SongList tracks={albumData.tracks} variant="album" />
+          </LibraryHeader>
         </>
       )}
     </PageWrapper>

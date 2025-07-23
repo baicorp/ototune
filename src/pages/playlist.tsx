@@ -22,8 +22,9 @@ export default function Playlist() {
             thumbnail={playlistData?.thumbnail}
             description={playlistData?.description}
             stat={playlistData?.playlistStat}
-          />
-          <SongList tracks={playlistData?.tracks} variant="playlist" />
+          >
+            <SongList tracks={playlistData?.tracks} variant="playlist" />
+          </LibraryHeader>
         </>
       )}
     </PageWrapper>

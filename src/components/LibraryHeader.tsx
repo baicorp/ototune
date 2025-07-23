@@ -18,30 +18,44 @@ export default function LibraryHeader({
   stat,
   description,
   artists,
-}: LibraryHeaderProps) {
+  children,
+}: LibraryHeaderProps & { children: React.ReactNode }) {
   return (
-    <div className="flex gap-4 cursor-default">
-      <div className="basis-5/12 min-w-32 max-w-72 shrink-0">
-        <img src={thumbnail} className="w-full rounded-md" />
-      </div>
-      <div className="py-4 flex flex-col gap-2">
-        <h1 className="font-bold text-2xl mb-3">{title}</h1>
-        <div>
-          <p className="text-themed-text-muted">{subtitle}</p>
-          <p className="text-themed-text-muted">{stat}</p>
+    <>
+      <header className="flex flex-col items-center gap-3 cursor-default mt-4 mb-6">
+        <div className="w-52 h-52 lg:w-56 lg:h-56 xl:w-64 xl:h-64">
+          <img
+            src={thumbnail}
+            className="rounded-md w-full h-full shadow shadow-themed-text-muted"
+          />
         </div>
-        {artists &&
-          artists.map((artist) => (
-            <Link
-              key={artist.browseId}
-              to={`/artist/${artist.browseId}`}
-              className="cursor-pointer"
-            >
-              {artist.name}
-            </Link>
-          ))}
-        <CollapsibleText>{description}</CollapsibleText>
-      </div>
-    </div>
+        <div className="flex flex-col items-center gap-2">
+          <h1 className="font-bold text-2xl">{title}</h1>
+          <div className="flex justify-center gap-2">
+            {artists &&
+              artists.map((artist) => (
+                <Link
+                  key={artist.browseId}
+                  to={`/artist/${artist.browseId}`}
+                  className="cursor-pointer"
+                >
+                  {artist.name}
+                </Link>
+              ))}
+          </div>
+          <div className="text-center">
+            <p className="text-themed-text-muted leading-snug">{subtitle}</p>
+            <p className="text-themed-text-muted leading-snug">{stat}</p>
+          </div>
+        </div>
+      </header>
+      <section>{children}</section>
+      {description && (
+        <footer className="mt-6 flex flex-col gap-2">
+          <h2 className="font-bold text-xl">About</h2>
+          <CollapsibleText>{description}</CollapsibleText>
+        </footer>
+      )}
+    </>
   );
 }

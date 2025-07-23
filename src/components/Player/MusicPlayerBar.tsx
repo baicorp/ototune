@@ -157,7 +157,7 @@ const PlayerActions = forwardRef<HTMLAudioElement, {}>((_, ref) => {
 
   return (
     <div className="h-full px-4 flex-[30%]">
-      <div className="h-full flex justify-around gap-3 items-center">
+      <div className="h-full flex justify-end gap-2.5 md:gap-4 lg:gap-6 items-center">
         <VolumeSlider ref={audioRef} />
         <button title="lyric" onClick={() => handleRightPanel("lyrics")}>
           <svg

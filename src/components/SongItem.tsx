@@ -35,12 +35,12 @@ export default function SongItem({
       className="w-full flex items-center gap-2.5 cursor-pointer"
       onClick={handleClick}
     >
-      <div className="w-12 shrink-0 aspect-square relative rounded-sm overflow-hidden bg-themed-card">
+      <div className="w-12 shrink-0 aspect-square relative rounded-sm overflow-hidden">
         {thumbnail && (
           <img
             src={thumbnail}
             loading="lazy"
-            className="w-full aspect-square object-contain object-center"
+            className="w-full bg-themed-card aspect-square object-contain object-center"
           />
         )}
         {index && (
