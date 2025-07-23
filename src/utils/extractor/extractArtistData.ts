@@ -4,6 +4,9 @@ import { contentType } from "../contentType";
 interface ArtistData {
   artistName: string;
   description: string;
+  stat: string;
+  suffle: { videoId: string; listId: string };
+  radio: { videoId: string; listId: string };
   thumbnail: string;
   thumbnailWidth: number;
   thumbnailHeight: number;
@@ -20,6 +23,25 @@ export default function extractArtistData(channelObject: any): ArtistData {
     description:
       channelObject?.header?.musicImmersiveHeaderRenderer?.description?.runs[0]
         ?.text,
+    stat:
+      channelObject?.header?.musicImmersiveHeaderRenderer?.monthlyListenerCount
+        ?.runs[0]?.text || "",
+    suffle: {
+      videoId:
+        channelObject?.header?.musicImmersiveHeaderRenderer?.playButton
+          ?.buttonRenderer?.navigationEndpoint?.watchEndpoint?.videoId,
+      listId:
+        channelObject?.header?.musicImmersiveHeaderRenderer?.playButton
+          ?.buttonRenderer?.navigationEndpoint?.watchEndpoint?.playlistId,
+    },
+    radio: {
+      videoId:
+        channelObject?.header?.musicImmersiveHeaderRenderer?.startRadioButton
+          ?.buttonRenderer?.navigationEndpoint?.watchEndpoint?.videoId,
+      listId:
+        channelObject?.header?.musicImmersiveHeaderRenderer?.startRadioButton
+          ?.buttonRenderer?.navigationEndpoint?.watchEndpoint?.playlistId,
+    },
     thumbnail:
       channelObject?.header?.musicImmersiveHeaderRenderer?.thumbnail
         ?.musicThumbnailRenderer?.thumbnail?.thumbnails[
