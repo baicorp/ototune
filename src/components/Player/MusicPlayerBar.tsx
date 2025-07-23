@@ -2,16 +2,41 @@ import { Link } from "react-router";
 import StaticTime from "./StaticTime";
 import RunningTime from "./RunningTime";
 import VolumeSlider from "./VolumeSlider";
-import { forwardRef, useRef } from "react";
 import PlayPauseButton from "./PlayPauseBtn";
 import NextTrackBtn from "./PrevNextTrackBtn";
 import ProgressBarTime from "./ProgressBarTime";
 import { useLayout } from "../../hooks/useLayout";
+import { forwardRef, useEffect, useRef } from "react";
 import usePlayer, { TrackState } from "../../hooks/usePlayer";
 
 export default function MusicPlayerBar() {
-  const { currentTrack, nextTrack } = usePlayer();
+  const { currentTrack, nextTrack, prevTrack } = usePlayer();
   const audioRef = useRef<HTMLAudioElement>(null);
+
+  useEffect(() => {
+    if (!currentTrack) return;
+    if ("mediaSession" in navigator) {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: currentTrack.title,
+        artist: currentTrack?.artists.map((artist) => artist?.name).join(" "),
+        album: "The Ultimate Collection (Remastered)",
+        artwork: [
+          {
+            src: currentTrack.thumbnail ?? "",
+            sizes: "512x512",
+            type: "image/png",
+          },
+        ],
+      });
+      navigator.mediaSession.setActionHandler("previoustrack", () => {
+        prevTrack();
+      });
+
+      navigator.mediaSession.setActionHandler("nexttrack", () => {
+        nextTrack();
+      });
+    }
+  }, [currentTrack]);
 
   return (
     <section
