@@ -10,6 +10,7 @@ import extractHomeDataTest from "./extractor/extractHomeTest";
 import extractArtistData from "./extractor/extractArtistData";
 import extractPlaylistData from "./extractor/extractPlaylistData";
 import extractMoodsGnereCategory from "./extractor/extractMooodsGenres";
+import extractSearchSuggestion from "./extractor/extractSearchSuggestion";
 import {
   extractLyricsBrowseId,
   extractLyricsData,
@@ -21,6 +22,21 @@ export async function search(query: string): Promise<MixContent[] | undefined> {
     if (query.length === 0) return;
     const searchData = await invoke<MixContent[]>("search", { query });
     return extractSearchData(searchData);
+  } catch (e: any) {
+    throw new Error("error data nih");
+  }
+}
+
+export async function getSearchSuggestion(
+  input: string,
+): Promise<ReturnType<typeof extractSearchSuggestion> | undefined> {
+  try {
+    input = input.trim();
+    if (input.length === 0) return;
+    const searchData = await invoke<MixContent[]>("get_search_suggestion", {
+      input,
+    });
+    return extractSearchSuggestion(searchData);
   } catch (e: any) {
     throw new Error("error data nih");
   }

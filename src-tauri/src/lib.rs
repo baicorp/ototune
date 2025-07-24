@@ -248,6 +248,41 @@ async fn search(app: tauri::AppHandle, query: String) -> Result<serde_json::Valu
 }
 
 #[tauri::command]
+async fn get_search_suggestion(
+    app: tauri::AppHandle,
+    input: String,
+) -> Result<serde_json::Value, String> {
+    let client = reqwest::Client::new();
+    let headers = build_headers();
+    let visitor_data = get_or_create_visitor_data(&app).await?;
+
+    let body = json!({
+        "input": input,
+        "context": {
+            "client": {
+                "clientName": "WEB_REMIX",
+                "clientVersion": "1.20220918",
+                "visitorData": visitor_data
+            }
+        },
+        "racyCheckOk": true,
+        "contentCheckOk": true
+    });
+
+    let res = client
+        .post(yt_url("music/get_search_suggestions"))
+        .headers(headers)
+        .json(&body)
+        .send()
+        .await
+        .map_err(|e| e.to_string())?;
+
+    res.json::<serde_json::Value>()
+        .await
+        .map_err(|e| e.to_string())
+}
+
+#[tauri::command]
 async fn get_album(app: tauri::AppHandle, browse_id: String) -> Result<serde_json::Value, String> {
     let client = reqwest::Client::new();
     let headers = build_headers();
@@ -602,6 +637,7 @@ pub fn run() {
             get_lyrics_content,
             get_home_test,
             get_track_data,
+            get_search_suggestion,
             get_audio_url
         ])
         .run(tauri::generate_context!())
