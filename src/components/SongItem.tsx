@@ -4,6 +4,7 @@ import usePlayer from "../hooks/usePlayer";
 
 type SongItemType = Track & {
   index?: string;
+  variant?: "small";
 };
 
 export default function SongItem({
@@ -15,6 +16,7 @@ export default function SongItem({
   duration,
   explicit,
   listId,
+  variant,
 }: SongItemType) {
   const { setCurrentTrack, currentTrack } = usePlayer();
 
@@ -35,7 +37,9 @@ export default function SongItem({
       className="w-full flex items-center gap-2.5 cursor-pointer"
       onClick={handleClick}
     >
-      <div className="w-12 shrink-0 aspect-square relative rounded-sm overflow-hidden">
+      <div
+        className={`${variant === "small" ? "w-10" : "w-12"} shrink-0 aspect-square relative rounded-sm overflow-hidden`}
+      >
         {thumbnail && (
           <img
             src={thumbnail}
@@ -201,20 +205,23 @@ export default function SongItem({
           </div>
         )}
       </div>
-      <div>
+      <div
+        className={`flex flex-col ${variant === "small" ? "gap-0" : "gap-1"}`}
+      >
         <p className="font-semibold leading-tight line-clamp-1">{title}</p>
-        <div className="flex items-center gap-2">
+        <div
+          className={`flex items-center ${variant === "small" ? "gap-1" : "gap-2"}`}
+        >
           {explicit && (
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              height="24px"
               viewBox="0 -960 960 960"
-              width="24px"
               className="w-5 shrink-0 aspect-square fill-themed-text-muted"
             >
               <path d="M360-280h240v-80H440v-80h160v-80H440v-80h160v-80H360v400ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Z" />
             </svg>
           )}
+          {variant && <span className="text-themed-text-muted">Song • </span>}
           {artists.map((artist) => (
             <Link
               key={artist.browseId}
