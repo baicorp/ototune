@@ -1,6 +1,9 @@
+import DynamicComponent from "../DynamicComp";
 import { FormEvent, useEffect, useState } from "react";
 import { getCurrentWindow } from "@tauri-apps/api/window";
+import { getSearchSuggestion } from "../../utils/fetcher";
 import { useSearchParams, useLocation, useNavigate } from "react-router";
+import extractSearchSuggestion from "../../utils/extractor/extractSearchSuggestion";
 
 export default function TopPanel() {
   return (
@@ -8,10 +11,9 @@ export default function TopPanel() {
       className="bg-themed-card flex justify-center items-center cursor-default"
       onMouseDown={async (e) => {
         const target = e.target as HTMLElement;
-        const tag = target.tagName.toLowerCase();
+        const isInteractive = target.closest('[data-interactive="true"]');
 
         // Prevent dragging when clicking on interactive elements
-        const isInteractive = ["button", "svg", "path", "input"].includes(tag);
         if (!isInteractive) {
           getCurrentWindow().startDragging();
         }
@@ -61,6 +63,7 @@ function SearchBar() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [query, setQuery] = useState("");
+  const [isFocus, setIsFocus] = useState(false);
 
   useEffect(() => {
     const q = searchParams.get("q") || "";
@@ -74,29 +77,41 @@ function SearchBar() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="grow">
-      <div className="flex items-center gap-2 bg-themed-bg rounded-md overflow-hidden focus-within:ring-2 focus-within:ring-themed-text-muted">
-        <input
-          id="query"
-          type="text"
-          name="query"
-          autoComplete="off"
-          placeholder="Find your favorite music"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          className="grow pl-4 pr-2 py-1 outline-none bg-transparent"
-        />
-        <button type="submit">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 512 512"
-            className="w-8 aspect-square fill-themed-text-muted pr-4"
-          >
-            <path d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6 .1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z" />
-          </svg>
-        </button>
-      </div>
-    </form>
+    <div className="grow relative" data-interactive="true">
+      <form onSubmit={handleSubmit}>
+        <div className="flex items-center gap-2 bg-themed-bg rounded-md overflow-hidden focus-within:ring-2 focus-within:ring-themed-text-muted">
+          <input
+            id="query"
+            type="text"
+            name="query"
+            autoComplete="off"
+            placeholder="Find your favorite music"
+            onFocus={() => {
+              setIsFocus(true);
+            }}
+            // TODO : find the right way to close the suggestion panel
+            onBlur={() => {
+              setTimeout(() => {
+                setIsFocus(false);
+              }, 250);
+            }}
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="grow pl-4 pr-2 py-1 outline-none bg-transparent"
+          />
+          <button type="submit">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 512 512"
+              className="w-8 aspect-square fill-themed-text-muted pr-4"
+            >
+              <path d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6 .1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z" />
+            </svg>
+          </button>
+        </div>
+      </form>
+      {isFocus && <SearchSuggestion query={query} />}
+    </div>
   );
 }
 
@@ -129,7 +144,7 @@ function NavigationHistory() {
   const goForward = () => canGoForward && navigate(1);
 
   return (
-    <div className="flex">
+    <div className="flex" data-interactive="true">
       <button onClick={goBack} disabled={!canGoBack} className="w-9 px-2 py-1">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -178,7 +193,7 @@ function WindowActionButton({
   }
 
   return (
-    <div className="flex items-center h-full">
+    <div className="flex items-center h-full" data-interactive="true">
       <button
         className="w-6 aspect-square p-1.5 bg-neutral-700 rounded-full flex justify-center items-center"
         onClick={(e) => {
@@ -193,6 +208,51 @@ function WindowActionButton({
       >
         {children}
       </button>
+    </div>
+  );
+}
+
+function SearchSuggestion({ query }: { query: string }) {
+  const [suggestion, setSuggestion] = useState<
+    ReturnType<typeof extractSearchSuggestion>
+  >([]);
+  const [isLoading, setIsloading] = useState(false);
+  const [_, setError] = useState("");
+
+  useEffect(() => {
+    async function getSuggestion() {
+      if (query.trim().length === 0) return;
+      try {
+        setIsloading(true);
+        const data = await getSearchSuggestion(query);
+        setSuggestion(data);
+        setError("");
+      } catch (e) {
+        setError("Failed to get data");
+      } finally {
+        setIsloading(false);
+      }
+    }
+    getSuggestion();
+  }, [query]);
+
+  return (
+    <div
+      className="absolute top-full mt-2 shadow shadow-themed-card flex flex-col gap-2 p-2.5 w-full h-96 z-20 border-2 border-themed-text-muted rounded-lg overflow-y-auto bg-themed-bg"
+      data-interactive="true"
+    >
+      {isLoading ? (
+        <p className="p-2 text-sm text-muted">Loading...</p>
+      ) : (
+        suggestion.map((data) => (
+          <DynamicComponent
+            key={data.id}
+            type={data.type}
+            props={data}
+            variant="small"
+          />
+        ))
+      )}
     </div>
   );
 }
