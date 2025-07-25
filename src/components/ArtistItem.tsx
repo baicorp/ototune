@@ -18,22 +18,22 @@ export default function ArtistItem({
   return (
     <Link
       to={`/artist/${id}`}
-      className={`${variant === "small" ? "w-full" : "w-34"}`}
+      className={`flex ${variant === "small" ? "w-full flex-row gap-2.5 p-1 rounded-md hover:bg-themed-card" : "w-34 flex-col gap-2"} items-center`}
     >
-      <div
-        className={`flex ${variant === "small" ? "w-10 flex-row gap-2.5" : "w-34 flex-col gap-2"} aspect-square items-center`}
-      >
+      <div className={`${variant === "small" ? "w-10" : "w-34"}`}>
         <img
           src={thumbnail}
           loading="lazy"
           className="w-full aspect-square object-cover rounded-full"
         />
-        <div>
-          <p className="text-center font-semibold line-clamp-2">{title}</p>
-          <p className="text-center leading-tight text-themed-text-muted">
-            {variant === "small" ? "Artist" : subtitle}
-          </p>
-        </div>
+      </div>
+      <div>
+        <p className="text-center font-semibold line-clamp-2">{title}</p>
+        <p
+          className={`${variant === "small" ? "text-start" : "text-center"} leading-tight text-themed-text-muted`}
+        >
+          {variant === "small" ? "Artist" : subtitle}
+        </p>
       </div>
     </Link>
   );

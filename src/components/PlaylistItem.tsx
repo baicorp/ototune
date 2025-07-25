@@ -18,7 +18,7 @@ export default function PlaylistItem({
   return (
     <Link
       to={`/playlist/${id}`}
-      className={`flex ${variant === "small" ? "w-full flex-row gap-2.5" : "w-34 flex-col gap-2"} cursor-pointer overflow-overflow-hidden`}
+      className={`flex ${variant === "small" ? "w-full flex-row gap-2.5 p-1 rounded-md hover:bg-themed-card" : "w-34 flex-col gap-2"} cursor-pointer overflow-overflow-hidden`}
     >
       <div className={`${variant === "small" ? "w-10" : "w-34"} aspect-square`}>
         <img
