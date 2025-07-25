@@ -1,4 +1,5 @@
 import DynamicComponent from "../DynamicComp";
+import useDebounce from "../../hooks/useDebounce";
 import { FormEvent, useEffect, useState } from "react";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { getSearchSuggestion } from "../../utils/fetcher";
@@ -218,13 +219,14 @@ function SearchSuggestion({ query }: { query: string }) {
   >([]);
   const [isLoading, setIsloading] = useState(false);
   const [_, setError] = useState("");
+  const debouncedQuery = useDebounce(query, 250);
 
   useEffect(() => {
     async function getSuggestion() {
-      if (query.trim().length === 0) return;
+      if (debouncedQuery.trim().length === 0) return;
       try {
         setIsloading(true);
-        const data = await getSearchSuggestion(query);
+        const data = await getSearchSuggestion(debouncedQuery);
         setSuggestion(data);
         setError("");
       } catch (e) {
@@ -234,7 +236,7 @@ function SearchSuggestion({ query }: { query: string }) {
       }
     }
     getSuggestion();
-  }, [query]);
+  }, [debouncedQuery]);
 
   return (
     <div

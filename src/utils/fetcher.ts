@@ -29,10 +29,10 @@ export async function search(query: string): Promise<MixContent[] | undefined> {
 
 export async function getSearchSuggestion(
   input: string,
-): Promise<ReturnType<typeof extractSearchSuggestion> | undefined> {
+): Promise<ReturnType<typeof extractSearchSuggestion>> {
   try {
     input = input.trim();
-    if (input.length === 0) return;
+    if (input.length === 0) return [];
     const searchData = await invoke<MixContent[]>("get_search_suggestion", {
       input,
     });
