@@ -1,8 +1,8 @@
 import DynamicComponent from "../DynamicComp";
 import useDebounce from "../../hooks/useDebounce";
-import { FormEvent, useEffect, useState } from "react";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { getSearchSuggestion } from "../../utils/fetcher";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { useSearchParams, useLocation, useNavigate } from "react-router";
 import extractSearchSuggestion from "../../utils/extractor/extractSearchSuggestion";
 
@@ -65,6 +65,7 @@ function SearchBar() {
   const [searchParams] = useSearchParams();
   const [query, setQuery] = useState("");
   const [isFocus, setIsFocus] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const q = searchParams.get("q") || "";
@@ -74,41 +75,32 @@ function SearchBar() {
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!query.trim()) return;
+    inputRef.current?.blur();
     navigate(`/search?q=${encodeURIComponent(query.trim())}`);
   }
 
   return (
     <div className="grow relative" data-interactive="true">
-      <form onSubmit={handleSubmit}>
+      <form
+        onSubmit={handleSubmit}
+        onFocus={() => setIsFocus(true)}
+        onBlur={() => {
+          setTimeout(() => setIsFocus(false), 250);
+        }}
+      >
         <div className="flex items-center gap-2 bg-themed-bg rounded-md overflow-hidden focus-within:ring-2 focus-within:ring-themed-text-muted">
           <input
+            ref={inputRef}
             id="query"
             type="text"
             name="query"
             autoComplete="off"
             placeholder="Find your favorite music"
-            onFocus={() => {
-              setIsFocus(true);
-            }}
-            // TODO : find the right way to close the suggestion panel
-            onBlur={() => {
-              setTimeout(() => {
-                setIsFocus(false);
-              }, 250);
-            }}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             className="grow pl-4 pr-2 py-1 outline-none bg-transparent"
           />
-          <button type="submit">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 512 512"
-              className="w-8 aspect-square fill-themed-text-muted pr-4"
-            >
-              <path d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6 .1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z" />
-            </svg>
-          </button>
+          <button type="submit">{/* SVG here */}</button>
         </div>
       </form>
       {isFocus && <SearchSuggestion query={query} />}
@@ -223,7 +215,10 @@ function SearchSuggestion({ query }: { query: string }) {
 
   useEffect(() => {
     async function getSuggestion() {
-      if (debouncedQuery.trim().length === 0) return;
+      if (debouncedQuery.trim().length === 0) {
+        setSuggestion([]);
+        return;
+      }
       try {
         setIsloading(true);
         const data = await getSearchSuggestion(debouncedQuery);
@@ -238,13 +233,43 @@ function SearchSuggestion({ query }: { query: string }) {
     getSuggestion();
   }, [debouncedQuery]);
 
+  if (suggestion.length === 0) return <div></div>;
+
   return (
     <div
       className="absolute top-full mt-2 shadow shadow-themed-card flex flex-col gap-2 p-2.5 w-full h-96 z-20 border-2 border-themed-text-muted rounded-lg overflow-y-auto bg-themed-bg"
       data-interactive="true"
     >
       {isLoading ? (
-        <p className="p-2 text-sm text-muted">Loading...</p>
+        <div className="h-full flex justify-center items-center">
+          <svg
+            version="1.1"
+            id="L9"
+            xmlns="http://www.w3.org/2000/svg"
+            xmlnsXlink="http://www.w3.org/1999/xlink"
+            x="0px"
+            y="0px"
+            viewBox="0 0 100 100"
+            enableBackground="new 0 0 0 0"
+            xmlSpace="preserve"
+            className="w-10"
+          >
+            <path
+              fill="#fff"
+              d="M73,50c0-12.7-10.3-23-23-23S27,37.3,27,50 M30.9,50c0-10.5,8.5-19.1,19.1-19.1S69.1,39.5,69.1,50"
+            >
+              <animateTransform
+                attributeName="transform"
+                attributeType="XML"
+                type="rotate"
+                dur="1s"
+                from="0 50 50"
+                to="360 50 50"
+                repeatCount="indefinite"
+              />
+            </path>
+          </svg>
+        </div>
       ) : (
         suggestion.map((data) => (
           <DynamicComponent

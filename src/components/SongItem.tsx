@@ -38,7 +38,7 @@ export default function SongItem({
       onClick={handleClick}
     >
       <div
-        className={`${variant === "small" ? "w-10" : "w-12"} shrink-0 aspect-square relative rounded-sm SongItemoverflow-hidden`}
+        className={`${variant === "small" ? "w-10" : "w-12"} shrink-0 aspect-square relative rounded-sm overflow-hidden`}
       >
         {thumbnail && (
           <img
