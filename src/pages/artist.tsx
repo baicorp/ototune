@@ -4,13 +4,14 @@ import usePlayer from "../hooks/usePlayer";
 import { getArtist } from "../utils/fetcher";
 import DynamicComponent from "../components/DynamicComp";
 import CollapsibleText from "../components/CollapsibleText";
+import ArtistPageLoad from "../components/Loading/ArtistLoad";
 import CategoryListLayout from "../components/CategoryListLayout";
 
 export default function Artist() {
   const { id } = useParams();
   const { data: artistData, error, isLoading } = useSWR(id, getArtist);
 
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading) return <ArtistPageLoad />;
 
   if (error) return <p>Hmm.. failed fetch data.</p>;
   return (

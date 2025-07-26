@@ -2,6 +2,7 @@ import useSWR from "swr";
 import { home } from "../utils/fetcher";
 import PageWrapper from "../components/PageWrapper";
 import DynamicComponent from "../components/DynamicComp";
+import HomePageLoad from "../components/Loading/HomePageLoad";
 import CategoryListLayout from "../components/CategoryListLayout";
 
 export default function Home() {
@@ -11,7 +12,7 @@ export default function Home() {
     isLoading,
   } = useSWR("home-page", home, { revalidateOnMount: true });
 
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading) return <HomePageLoad />;
 
   if (error) return <p>failed to fetch data.</p>;
   return (

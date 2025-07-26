@@ -4,6 +4,7 @@ import PageWrapper from "../components/PageWrapper";
 import { moodsGenresCategory } from "../utils/fetcher";
 import DynamicComponent from "../components/DynamicComp";
 import CategoryListLayout from "../components/CategoryListLayout";
+import MixContentLoad from "../components/Loading/MixContentLoad";
 
 export default function CategoryContent() {
   const { params } = useParams();
@@ -13,7 +14,7 @@ export default function CategoryContent() {
     isLoading,
   } = useSWR(params, moodsGenresCategory);
 
-  if (isLoading) return <p>loading...</p>;
+  if (isLoading) return <MixContentLoad />;
 
   if (error) return <p>failed to fetch data.</p>;
   return (

@@ -4,12 +4,13 @@ import { getAlbum } from "../utils/fetcher";
 import Library from "../components/Library";
 import SongList from "../components/SongList";
 import PageWrapper from "../components/PageWrapper";
+import PlaylistAlbumPageLoad from "../components/Loading/PlaylistALbumPageLoad";
 
 export default function Album() {
   const { id } = useParams();
   const { data: albumData, error, isLoading } = useSWR(id, getAlbum);
 
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading) return <PlaylistAlbumPageLoad />;
 
   if (error) return <p>Hmm.. failed fetch data.</p>;
   return (

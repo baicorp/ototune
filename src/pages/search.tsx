@@ -4,6 +4,7 @@ import { useSearchParams } from "react-router";
 import PageWrapper from "../components/PageWrapper";
 import DynamicComponent from "../components/DynamicComp";
 import CategoryListLayout from "../components/CategoryListLayout";
+import MixContentLoad from "../components/Loading/MixContentLoad";
 
 export default function Search() {
   const [searchParams] = useSearchParams();
@@ -11,7 +12,7 @@ export default function Search() {
 
   const { data: searchData, error, isLoading } = useSWR(query, search);
 
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading) return <MixContentLoad />;
 
   if (error) return <p>Hmm.. failed fetch data.</p>;
   return (

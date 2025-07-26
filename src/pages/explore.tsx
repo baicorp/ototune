@@ -2,6 +2,7 @@ import useSWR from "swr";
 import { Link } from "react-router";
 import { explore } from "../utils/fetcher";
 import PageWrapper from "../components/PageWrapper";
+import ExplorePageLoad from "../components/Loading/ExploreLoad";
 import { ContentsExploreType } from "../utils/extractor/extractExplore";
 
 export default function Explore() {
@@ -11,7 +12,7 @@ export default function Explore() {
     isLoading,
   } = useSWR("explore", explore);
 
-  if (isLoading) return <p>loading...</p>;
+  if (isLoading) return <ExplorePageLoad />;
 
   if (error) return <p>failed to fetch data.</p>;
   return (
