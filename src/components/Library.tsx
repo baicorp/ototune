@@ -38,7 +38,7 @@ export default function LibraryHeader({
           />
         </div>
         <div className="flex flex-col items-center gap-2">
-          <h1 className="font-bold text-2xl">{title}</h1>
+          <h1 className="font-bold text-2xl text-center">{title}</h1>
           <div className="flex justify-center gap-2">
             {artists &&
               artists.map((artist) => (
