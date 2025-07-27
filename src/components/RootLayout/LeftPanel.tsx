@@ -1,9 +1,10 @@
 import { NavLink } from "react-router";
+import { useLayout } from "../../hooks/useLayout";
 import { FormEvent, useRef, useState } from "react";
 
 export default function LeftPanel() {
   return (
-    <nav className="md:max-w-52 lg:max-w-64 xl:max-w-72 sticky top-0 p-2 lg:p-3 border-r border-themed-border flex flex-col shrink-0">
+    <Nav>
       <NavigationLink href="/" title="Home">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -26,6 +27,18 @@ export default function LeftPanel() {
         🔮
       </NavigationLink>
       <Library />
+    </Nav>
+  );
+}
+
+function Nav({ children }: { children: React.ReactNode }) {
+  const { isLeftPanelOpen } = useLayout();
+
+  return (
+    <nav
+      className={`${isLeftPanelOpen ? "md:w-52 lg:w-64 xl:w-72" : "w-fit"} ] sticky top-0 p-2 lg:p-3 border-r border-themed-border flex flex-col shrink-0 grow-0`}
+    >
+      {children}
     </nav>
   );
 }
@@ -51,6 +64,8 @@ function NavigationLink({
   description?: string;
   children?: React.ReactNode;
 }) {
+  const { isLeftPanelOpen } = useLayout();
+
   return (
     <NavLink
       className={({ isActive }) => {
@@ -62,7 +77,7 @@ function NavigationLink({
         {children}
         {thumbnail && <img src={thumbnail} />}
       </div>
-      <div className="hidden md:block">
+      <div className={`${isLeftPanelOpen ? "hidden md:block" : "hidden"}`}>
         <span className="line-clamp-1 mb-1">{title}</span>
         {description && (
           <span className="text-themed-text-muted line-clamp-1">
@@ -75,9 +90,13 @@ function NavigationLink({
 }
 
 function CreatePlaylistButton() {
+  const { isLeftPanelOpen } = useLayout();
+
   return (
     <div className="flex justify-between items-center mt-2 border-t border-t-themed-border">
-      <p className="hidden md:block cursor-default text-themed-text-muted pl-3">
+      <p
+        className={`${isLeftPanelOpen ? "hidden md:block" : "hidden"} cursor-default text-themed-text-muted pl-3`}
+      >
         Your library
       </p>
       <CreatePlaylist />

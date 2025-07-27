@@ -11,7 +11,7 @@ export interface TrackState {
     isOpen: boolean,
     content: "queue" | "lyrics" | undefined,
   ) => void;
-  setLeftPanel: () => void;
+  toggleLeftPanel: () => void;
 }
 
 export const useLayout = create<TrackState>()((set) => ({
@@ -19,9 +19,11 @@ export const useLayout = create<TrackState>()((set) => ({
     isOpen: false,
     content: undefined,
   },
-  isLeftPanelOpen: false,
+  isLeftPanelOpen: JSON.parse(
+    localStorage.getItem("isLeftPanelOpen") ?? "true",
+  ),
 
-  setRightPanel: (isOpen: boolean, content: "queue" | "lyrics" | undefined) => {
+  setRightPanel: (isOpen, content) => {
     set({
       rightPanel: {
         isOpen,
@@ -29,6 +31,11 @@ export const useLayout = create<TrackState>()((set) => ({
       },
     });
   },
-  setLeftPanel: () =>
-    set((state) => ({ isLeftPanelOpen: !state.isLeftPanelOpen })),
+
+  toggleLeftPanel: () =>
+    set((state) => {
+      const newState = !state.isLeftPanelOpen;
+      localStorage.setItem("isLeftPanelOpen", JSON.stringify(newState));
+      return { isLeftPanelOpen: newState };
+    }),
 }));
