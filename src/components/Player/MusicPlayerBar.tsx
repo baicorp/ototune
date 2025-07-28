@@ -4,10 +4,11 @@ import RunningTime from "./RunningTime";
 import VolumeSlider from "./VolumeSlider";
 import PlayPauseButton from "./PlayPauseBtn";
 import NextTrackBtn from "./PrevNextTrackBtn";
+import usePlayer from "../../hooks/usePlayer";
 import ProgressBarTime from "./ProgressBarTime";
 import { useLayout } from "../../hooks/useLayout";
 import { forwardRef, useEffect, useRef } from "react";
-import usePlayer, { TrackState } from "../../hooks/usePlayer";
+import { TextItemLoad } from "../Loading/TextItemLoad";
 
 export default function MusicPlayerBar() {
   const { currentTrack, nextTrack, prevTrack } = usePlayer();
@@ -43,7 +44,7 @@ export default function MusicPlayerBar() {
       className={`${currentTrack ? "block" : "hidden"} sticky bottom-0 border-t border-themed-border`}
     >
       <div className="flex lg:gap-4 xl:gap-10 h-19">
-        <PlayerInfo currentTrack={currentTrack} />
+        <PlayerInfo />
         <PlayerControls ref={audioRef} />
         <PlayerActions ref={audioRef} />
       </div>
@@ -58,19 +59,31 @@ export default function MusicPlayerBar() {
   );
 }
 
-function PlayerInfo({ currentTrack }: Pick<TrackState, "currentTrack">) {
+function PlayerInfo() {
+  const { currentTrack, isLoading } = usePlayer();
   return (
     <>
       {currentTrack && (
-        <div className="h-full basis-[30%] max-w-[30%] pl-4 pr-2">
+        <div className="h-full basis-[30%] max-w-[30%] pl-4 pr-2 shrink-0">
           <div className="h-full flex items-center gap-2">
             <div className="shrink-0 w-13 aspect-square border border-themed-border rounded-sm">
-              <img
-                src={currentTrack.thumbnail}
-                className="w-13 h-full object-contain rounded-sm"
-              />
+              {currentTrack.thumbnail && (
+                <img
+                  src={currentTrack.thumbnail}
+                  className="w-full aspect-square object-contain rounded-sm"
+                />
+              )}
+              {!currentTrack.thumbnail && isLoading && (
+                <div className="w-full aspect-square bg-themed-border animate-pulse"></div>
+              )}
             </div>
             <div className="basis-9/12 grow-0 overflow-hidden">
+              {!currentTrack.title && isLoading && <TextItemLoad />}
+              {currentTrack.artists.length === 0 && isLoading && (
+                <div className="mt-2">
+                  <TextItemLoad width="w-1/2" />
+                </div>
+              )}
               <p className="font-semibold line-clamp-1">{currentTrack.title}</p>
               <div className="flex items-center flex-nowrap gap-1">
                 {currentTrack.explicit && (
@@ -156,7 +169,7 @@ const PlayerActions = forwardRef<HTMLAudioElement, {}>((_, ref) => {
   }
 
   return (
-    <div className="h-full px-4 flex-[30%]">
+    <div className="h-full px-4 flex-[30%] shrink-0">
       <div className="h-full flex justify-end gap-2.5 md:gap-4 lg:gap-6 items-center">
         <VolumeSlider ref={audioRef} />
         <button title="lyric" onClick={() => handleRightPanel("lyrics")}>
