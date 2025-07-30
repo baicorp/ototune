@@ -23,20 +23,22 @@ export default function Artist() {
             backgroundImage: `url(${artistData.thumbnail})`,
           }}
         >
-          <div className="bg-gradient-to-b from-transparent to-themed-bg flex flex-col pt-32">
-            <div className="px-4 py-6 flex flex-col gap-2 lg:gap-4 lg:p-8">
+          <div className="bg-gradient-to-b from-transparent to-themed-bg flex flex-col pt-32 xl:pt-52">
+            <div className="p-6 flex flex-col gap-3 lg:gap-4 xl:px-8">
               <div className="flex gap-4 items-center">
                 <Avatar avatar={artistData.avatar} />
                 <h1 className="font-bold lg:font-black text-4xl lg:text-6xl">
                   {artistData.artistName}
                 </h1>
               </div>
-              {artistData.stat && <p>{artistData?.stat}</p>}
+              {artistData.stat && (
+                <p className="leading-none">{artistData.stat}</p>
+              )}
               <div className="w-2/3 cursor-pointer">
                 <CollapsibleText>{artistData.description}</CollapsibleText>
               </div>
               {(artistData.radio.videoId || artistData.suffle.videoId) && (
-                <div className="flex gap-2 mt-1">
+                <div className="flex gap-2">
                   <StartButton
                     id={artistData.suffle.videoId}
                     listId={artistData.suffle.listId}
@@ -53,25 +55,28 @@ export default function Artist() {
           </div>
         </section>
       )}
-      {artistData &&
-        artistData.contents.map((data, index) => {
-          return (
-            <section key={index} className="p-4">
-              <p className="font-semibold text-xl mb-2">{data.headerTitle}</p>
-              <CategoryListLayout category={data.contents[0].type}>
-                {data.contents.map((content, index) => {
-                  return (
-                    <DynamicComponent
-                      key={index}
-                      type={content.type}
-                      props={content}
-                    />
-                  );
-                })}
-              </CategoryListLayout>
-            </section>
-          );
-        })}
+      {artistData && (
+        <section className="px-6 py-4 xl:p-8 flex flex-col gap-6">
+          {artistData.contents.map((data, index) => {
+            return (
+              <section key={index}>
+                <p className="font-semibold text-xl mb-2">{data.headerTitle}</p>
+                <CategoryListLayout category={data.contents[0].type}>
+                  {data.contents.map((content, index) => {
+                    return (
+                      <DynamicComponent
+                        key={index}
+                        type={content.type}
+                        props={content}
+                      />
+                    );
+                  })}
+                </CategoryListLayout>
+              </section>
+            );
+          })}
+        </section>
+      )}
     </div>
   );
 }

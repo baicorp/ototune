@@ -43,7 +43,7 @@ export default function MusicPlayerBar() {
     <section
       className={`${currentTrack ? "block" : "hidden"} sticky bottom-0 border-t border-themed-border`}
     >
-      <div className="flex lg:gap-4 xl:gap-10 h-19">
+      <div className="flex items-center h-19">
         <PlayerInfo />
         <PlayerControls ref={audioRef} />
         <PlayerActions ref={audioRef} />
@@ -64,8 +64,8 @@ function PlayerInfo() {
   return (
     <>
       {currentTrack && (
-        <div className="h-full basis-[30%] max-w-[30%] pl-4 pr-2 shrink-0">
-          <div className="h-full flex items-center gap-2">
+        <div className="basis-[30%] max-w-[30%] px-4 grow-0 shrink-0">
+          <div className="flex items-center gap-2">
             <div className="shrink-0 w-13 aspect-square border border-themed-border rounded-sm">
               {currentTrack.thumbnail && (
                 <img
@@ -78,36 +78,45 @@ function PlayerInfo() {
               )}
             </div>
             <div className="basis-9/12 grow-0 overflow-hidden">
-              {!currentTrack.title && isLoading && <TextItemLoad />}
-              {currentTrack.artists.length === 0 && isLoading && (
+              {!currentTrack.title && isLoading ? (
+                <TextItemLoad />
+              ) : (
+                <p className="font-semibold line-clamp-1">
+                  {currentTrack.title}
+                </p>
+              )}
+              {currentTrack.artists.length === 0 && isLoading ? (
                 <div className="mt-2">
                   <TextItemLoad width="w-1/2" />
                 </div>
+              ) : (
+                <div className="flex items-center flex-nowrap gap-1">
+                  {currentTrack.explicit && (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      height="24px"
+                      viewBox="0 -960 960 960"
+                      width="24px"
+                      className="w-4 shrink-0 aspect-square fill-themed-text-muted"
+                    >
+                      <path d="M360-280h240v-80H440v-80h160v-80H440v-80h160v-80H360v400ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Z" />
+                    </svg>
+                  )}
+                  <div className="overflow-hidden text-ellipsis whitespace-nowrap text-themed-text-muted text-sm">
+                    {currentTrack?.artists.map((artist, index) => (
+                      <Link
+                        key={artist.browseId}
+                        to={`/artist/${artist.browseId}`}
+                        onClick={(e) => e.stopPropagation()}
+                        className="inline hover:underline"
+                      >
+                        {artist.name}
+                        {index < currentTrack?.artists.length - 1 && ", "}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
               )}
-              <p className="font-semibold line-clamp-1">{currentTrack.title}</p>
-              <div className="flex items-center flex-nowrap gap-1">
-                {currentTrack.explicit && (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    height="24px"
-                    viewBox="0 -960 960 960"
-                    width="24px"
-                    className="w-4 shrink-0 aspect-square fill-themed-text-muted"
-                  >
-                    <path d="M360-280h240v-80H440v-80h160v-80H440v-80h160v-80H360v400ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Z" />
-                  </svg>
-                )}
-                {currentTrack.artists.map((artist) => (
-                  <Link
-                    key={artist.browseId}
-                    to={`/artist/${artist.browseId}`}
-                    onClick={(e) => e.stopPropagation()}
-                    className="text-themed-text-muted text-nowrap text-sm line-clamp-1"
-                  >
-                    {artist.name}
-                  </Link>
-                ))}
-              </div>
             </div>
             <button
               className="ml-auto shrink-0 w-6 aspect-square"
@@ -132,7 +141,7 @@ const PlayerControls = forwardRef<HTMLAudioElement, {}>((_, ref) => {
   const audioRef = ref as React.RefObject<HTMLAudioElement>;
 
   return (
-    <div className="h-full p-2 flex-2/5 shrink-0 relative">
+    <div className="p-2 flex-2/5 shrink-0 relative">
       <div className="h-full flex flex-col gap-2">
         <div className="flex justify-center gap-4">
           <NextTrackBtn variant="prev" ref={audioRef} />
@@ -169,8 +178,8 @@ const PlayerActions = forwardRef<HTMLAudioElement, {}>((_, ref) => {
   }
 
   return (
-    <div className="h-full px-4 flex-[30%] shrink-0">
-      <div className="h-full flex justify-end gap-2.5 md:gap-4 lg:gap-6 items-center">
+    <div className="px-4 flex-[30%] shrink-0 grow-0">
+      <div className="flex justify-end gap-2.5 md:gap-4 lg:gap-6 items-center">
         <VolumeSlider ref={audioRef} />
         <button title="lyric" onClick={() => handleRightPanel("lyrics")}>
           <svg

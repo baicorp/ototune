@@ -1,6 +1,6 @@
 import { NavLink } from "react-router";
 import { useLayout } from "../../hooks/useLayout";
-import { FormEvent, useRef, useState } from "react";
+import { useRef, useState } from "react";
 
 export default function LeftPanel() {
   return (
@@ -102,7 +102,7 @@ function CreatePlaylistButton() {
 }
 
 function CreatePlaylist() {
-  const [load, setLoad] = useState(false);
+  const [load, _] = useState(false);
   const dialogRef = useRef<HTMLDialogElement>(null);
 
   function handleClick() {

@@ -27,10 +27,12 @@ export default function ArtistItem({
           className="w-full aspect-square object-cover rounded-full"
         />
       </div>
-      <div>
-        <p className="text-center font-semibold line-clamp-2">{title}</p>
+      <div className="flex flex-col gap-1">
+        <p className="text-center font-semibold line-clamp-2 leading-tight">
+          {title}
+        </p>
         <p
-          className={`${variant === "small" ? "text-start" : "text-center"} leading-tight text-themed-text-muted`}
+          className={`${variant === "small" ? "text-start" : "text-center"} text-themed-text-muted line-clamp-2 leading-tight`}
         >
           {variant === "small" ? "Artist" : subtitle}
         </p>

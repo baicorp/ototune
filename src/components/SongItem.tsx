@@ -206,11 +206,11 @@ export default function SongItem({
         )}
       </div>
       <div
-        className={`flex flex-col ${variant === "small" ? "gap-0" : "gap-1"}`}
+        className={`flex flex-col overflow-hidden ${variant === "small" ? "gap-0" : "gap-1"}`}
       >
         <p className="font-semibold leading-tight line-clamp-1">{title}</p>
         <div
-          className={`flex items-center ${variant === "small" ? "gap-1" : "gap-2"}`}
+          className={`max-w-full flex items-center ${variant === "small" ? "gap-1" : "gap-2"}`}
         >
           {explicit && (
             <svg
@@ -221,17 +221,22 @@ export default function SongItem({
               <path d="M360-280h240v-80H440v-80h160v-80H440v-80h160v-80H360v400ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Z" />
             </svg>
           )}
-          {variant && <span className="text-themed-text-muted">Song • </span>}
-          {artists.map((artist) => (
-            <Link
-              key={artist.browseId}
-              to={`/artist/${artist.browseId}`}
-              onClick={(e) => e.stopPropagation()}
-              className="cursor-pointer text-themed-text-muted text-nowrap line-clamp-1"
-            >
-              {artist.name}
-            </Link>
-          ))}
+          {variant && (
+            <span className="text-themed-text-muted text-nowrap">Song • </span>
+          )}
+          <div className="overflow-hidden text-ellipsis whitespace-nowrap text-themed-text-muted">
+            {artists.map((artist, index) => (
+              <Link
+                key={artist.browseId}
+                to={`/artist/${artist.browseId}`}
+                onClick={(e) => e.stopPropagation()}
+                className="inline hover:underline"
+              >
+                {artist.name}
+                {index < artists.length - 1 && ", "}
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
       {duration && (

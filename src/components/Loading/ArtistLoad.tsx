@@ -6,8 +6,8 @@ import CategoryListLayout from "../CategoryListLayout";
 export default function ArtistPageLoad() {
   return (
     <PageWrapper>
-      <div className="flex flex-col pt-32">
-        <div className="py-6 flex flex-col gap-4 lg:gap-4 lg:p-8">
+      <div className="flex flex-col pt-36 xl:pt-56">
+        <div className="flex flex-col gap-4">
           <TextItemLoad variant="headerTitle" width="w-30" />
           <TextItemLoad variant="headerTitle" width="w-30" />
           <div className="w-2/3 cursor-pointer flex flex-col gap-1">
@@ -20,7 +20,7 @@ export default function ArtistPageLoad() {
             <div className="animate-pulse rounded-full w-28 h-10 p-3 bg-themed-border"></div>
           </div>
         </div>
-        <div className="mt-6">
+        <div className="mt-8">
           <div className="flex flex-col gap-4">
             <TextItemLoad variant="headerTitle" width="w-30" />
             <CategoryListLayout category="song">
