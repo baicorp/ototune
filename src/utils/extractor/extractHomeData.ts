@@ -12,6 +12,8 @@ export default function extractHomeData(data: any): MixContent[] {
           ?.musicCarouselShelfBasicHeaderRenderer?.title?.runs[0]?.text;
       return {
         headerTitle: contentTypeTitle,
+        // Todo: find actual id and params
+        moreContent: { id: "", params: "" },
         contents: data?.musicCarouselShelfRenderer?.contents?.map(
           (data: any) => {
             if (data?.musicResponsiveListItemRenderer) {

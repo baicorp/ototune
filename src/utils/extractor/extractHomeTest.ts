@@ -18,13 +18,18 @@ export default function extractHomeDataTest(object: any): MixContent[] {
         content?.musicCarouselShelfRenderer?.title?.runs[0]?.text?.toLowerCase() ===
           "last episodes"
       ) {
-        return { headerTitle: undefined, contents: [] };
+        return {
+          headerTitle: undefined,
+          moreContent: { id: "", params: "" },
+          contents: [],
+        };
       }
 
       return {
         headerTitle:
           content?.musicCarouselShelfRenderer?.header
             ?.musicCarouselShelfBasicHeaderRenderer?.title?.runs[0]?.text,
+        moreContent: { id: "", params: "" },
         contents: content?.musicCarouselShelfRenderer?.contents?.map(
           (content: any) => {
             return {

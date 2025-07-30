@@ -86,6 +86,14 @@ export default function extractArtistData(channelObject: any): ArtistData {
             const headerTitle = data?.musicShelfRenderer?.title?.runs[0]?.text;
             return {
               headerTitle,
+              moreContent: {
+                id:
+                  data?.musicShelfRenderer?.bottomEndpoint?.browseEndpoint
+                    ?.browseId || "",
+                params:
+                  data?.musicShelfRenderer?.bottomEndpoint?.browseEndpoint
+                    ?.params || "",
+              },
               contents: data?.musicShelfRenderer?.contents?.map((data: any) => {
                 return {
                   id: data?.musicResponsiveListItemRenderer?.flexColumns[0]
@@ -151,6 +159,18 @@ export default function extractArtistData(channelObject: any): ArtistData {
             }
             return {
               headerTitle,
+              moreContent: {
+                id:
+                  data?.musicCarouselShelfRenderer?.header
+                    ?.musicCarouselShelfBasicHeaderRenderer?.moreContentButton
+                    ?.buttonRenderer?.navigationEndpoint?.browseEndpoint
+                    ?.browseId || "",
+                params:
+                  data?.musicCarouselShelfRenderer?.header
+                    ?.musicCarouselShelfBasicHeaderRenderer?.moreContentButton
+                    ?.buttonRenderer?.navigationEndpoint?.browseEndpoint
+                    ?.params || "",
+              },
               contents: data?.musicCarouselShelfRenderer?.contents?.map(
                 (data: any) => {
                   return {

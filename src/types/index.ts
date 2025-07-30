@@ -10,6 +10,7 @@ export interface Track {
 
 export interface MixContent {
   headerTitle: string;
+  moreContent: { id: string; params: string };
   contents: (Track & {
     subtitle: string;
     type: string;

@@ -16,10 +16,10 @@ import {
   extractLyricsData,
 } from "./extractor/extractLyrics";
 
-export async function search(query: string): Promise<MixContent[] | undefined> {
+export async function search(query: string): Promise<MixContent[]> {
   try {
     query = query.trim();
-    if (query.length === 0) return;
+    if (query.length === 0) return [];
     const searchData = await invoke<MixContent[]>("search", { query });
     return extractSearchData(searchData);
   } catch (e: any) {
@@ -42,7 +42,7 @@ export async function getSearchSuggestion(
   }
 }
 
-export async function home(): Promise<MixContent[] | undefined> {
+export async function home(): Promise<MixContent[]> {
   try {
     const [dataOne, dataTwo] = await Promise.all([
       invoke<MixContent[]>("get_home_test"),
@@ -56,10 +56,12 @@ export async function home(): Promise<MixContent[] | undefined> {
     const homeData = [
       {
         headerTitle: "Local " + local[0].headerTitle,
+        moreContent: local[0].moreContent,
         contents: local[0].contents,
       },
       {
         headerTitle: "Global " + global[0].headerTitle,
+        moreContent: global[0].moreContent,
         contents: global[0].contents,
       },
       ...recomendation,
@@ -84,7 +86,7 @@ export async function getPlaylist(
 
 export async function getAlbum(
   id: string,
-): Promise<ReturnType<typeof extractAlbumData> | undefined> {
+): Promise<ReturnType<typeof extractAlbumData>> {
   try {
     if (!id) throw new Error("no id provided");
     const data = await invoke<any>("get_album", { browseId: id });
@@ -96,7 +98,7 @@ export async function getAlbum(
 
 export async function getArtist(
   id: string,
-): Promise<ReturnType<typeof extractArtistData> | undefined> {
+): Promise<ReturnType<typeof extractArtistData>> {
   try {
     if (!id) throw new Error("no id provided");
     const data = await invoke<any>("get_artist", { browseId: id });
@@ -107,7 +109,7 @@ export async function getArtist(
 }
 
 export async function explore(): Promise<
-  ReturnType<typeof extractExploreData> | undefined
+  ReturnType<typeof extractExploreData>
 > {
   try {
     const rawExploreData = await invoke<any>("explore");
@@ -119,7 +121,7 @@ export async function explore(): Promise<
 
 export async function moodsGenresCategory(
   params: string,
-): Promise<ReturnType<typeof extractMoodsGnereCategory> | undefined> {
+): Promise<ReturnType<typeof extractMoodsGnereCategory>> {
   try {
     if (!params) throw new Error("no id provided");
     const rawExploreData = await invoke<any>("moods_genre_category", {

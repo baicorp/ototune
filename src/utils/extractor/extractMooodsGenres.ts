@@ -13,6 +13,17 @@ export default function extractMoodsGnereCategory(
       headerTitle:
         category?.musicCarouselShelfRenderer?.header
           ?.musicCarouselShelfBasicHeaderRenderer?.title?.runs[0]?.text,
+      moreContent: {
+        id:
+          category?.musicCarouselShelfRenderer?.header
+            ?.musicCarouselShelfBasicHeaderRenderer?.moreContentButton
+            ?.buttonRenderer?.navigationEndpoint?.browseEndpoint?.browseId ||
+          "",
+        params:
+          category?.musicCarouselShelfRenderer?.header
+            ?.musicCarouselShelfBasicHeaderRenderer?.moreContentButton
+            ?.buttonRenderer?.navigationEndpoint?.browseEndpoint?.params || "",
+      },
       contents: category?.musicCarouselShelfRenderer?.contents?.map(
         (content: any) => {
           return {

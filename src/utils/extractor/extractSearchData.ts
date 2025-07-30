@@ -17,6 +17,14 @@ export default function extractSearchData(searchDataObject: any): MixContent[] {
           headerTitle:
             content?.musicCardShelfRenderer?.header
               ?.musicCardShelfHeaderBasicRenderer?.title?.runs[0]?.text,
+          moreContent: {
+            id:
+              content?.musicCardShelfRenderer?.bottomEndpoint?.searchEndpoint
+                ?.query || "",
+            params:
+              content?.musicCardShelfRenderer?.bottomEndpoint?.searchEndpoint
+                ?.params || "",
+          },
           contents: [
             {
               id:
@@ -86,6 +94,14 @@ export default function extractSearchData(searchDataObject: any): MixContent[] {
 
         return {
           headerTitle: content?.musicShelfRenderer?.title?.runs[0]?.text,
+          moreContent: {
+            id:
+              content?.musicShelfRenderer?.bottomEndpoint?.searchEndpoint
+                ?.query || "",
+            params:
+              content?.musicShelfRenderer?.bottomEndpoint?.searchEndpoint
+                ?.params || "",
+          },
           contents: content?.musicShelfRenderer?.contents?.map(
             (content: any) => {
               const subtitle =
