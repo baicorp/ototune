@@ -16,6 +16,7 @@
         "title": "Ototune",
         "width": 1024,
         "height": 700,
+        "visible": false,
         "minWidth": 700,
         "minHeight": 500
       }
