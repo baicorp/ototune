@@ -5,13 +5,20 @@ export default function extractAllSong(allSongData: any): {
   contents: Track[];
   continuationToken: string;
 } {
-  const contents =
+  const fromArtistPage =
     allSongData?.contents?.singleColumnBrowseResultsRenderer?.tabs[0]
       ?.tabRenderer?.content?.sectionListRenderer?.contents[0]
       ?.musicPlaylistShelfRenderer?.contents;
-  console.log(contents.length);
+  const fromSearchPage =
+    allSongData?.contents?.tabbedSearchResultsRenderer?.tabs[0]?.tabRenderer
+      ?.content?.sectionListRenderer?.contents[0]?.musicShelfRenderer?.contents;
+  const contents = fromArtistPage || fromSearchPage;
   return {
-    title: allSongData?.header?.musicHeaderRenderer?.title?.runs[0]?.text,
+    title:
+      allSongData?.header?.musicHeaderRenderer?.title?.runs[0]?.text ||
+      allSongData?.contents?.tabbedSearchResultsRenderer?.tabs[0]?.tabRenderer
+        ?.content?.sectionListRenderer?.contents[0]?.musicShelfRenderer?.title
+        ?.runs[0]?.text,
     contents: contents
       ?.map((content: any) => {
         const dataItem = content?.musicResponsiveListItemRenderer;
@@ -47,8 +54,13 @@ export default function extractAllSong(allSongData: any): {
             dataItem?.thumbnail?.musicThumbnailRenderer?.thumbnail
               ?.thumbnails[0]?.url,
           duration:
-            dataItem?.fixedColumns[0]
-              ?.musicResponsiveListItemFixedColumnRenderer?.text?.runs[0]?.text,
+            dataItem?.fixedColumns?.[0]
+              ?.musicResponsiveListItemFixedColumnRenderer?.text?.runs[0]
+              ?.text ||
+            dataItem?.flexColumns?.[1]?.musicResponsiveListItemFlexColumnRenderer?.text?.runs?.at(
+              -1,
+            )?.text ||
+            null,
           explicit:
             dataItem?.badges?.some(
               (badge: any) =>
@@ -57,12 +69,16 @@ export default function extractAllSong(allSongData: any): {
             ) ?? false,
           listId:
             dataItem?.flexColumns[0]?.musicResponsiveListItemFlexColumnRenderer
-              ?.text?.runs[0]?.navigationEndpoint?.watchEndpoint?.playlistId,
+              ?.text?.runs[0]?.navigationEndpoint?.watchEndpoint?.playlistId ||
+            null,
         };
       })
       .filter((track: Track) => track.id && track.title),
     continuationToken:
       contents[contents?.length - 1]?.continuationItemRenderer
-        ?.continuationEndpoint?.continuationCommand?.token,
+        ?.continuationEndpoint?.continuationCommand?.token ||
+      allSongData?.contents?.tabbedSearchResultsRenderer?.tabs[0]?.tabRenderer
+        ?.content?.sectionListRenderer?.contents[0]?.musicShelfRenderer
+        ?.continuations?.[0]?.nextContinuationData?.continuation,
   };
 }
