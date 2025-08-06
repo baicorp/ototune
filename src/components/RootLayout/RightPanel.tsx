@@ -27,9 +27,15 @@ export default function RightPanel() {
 }
 
 function QueueContent() {
-  const { trackQueue, isLoading } = usePlayer();
+  const { trackQueue, isLoading, currentTrack } = usePlayer();
 
-  if (isLoading) {
+  // only show skeleton when first play song and currentTrack listId !== trackQueue listId
+  if (
+    isLoading &&
+    (trackQueue.length === 0 ||
+      (trackQueue.length !== 0 &&
+        currentTrack?.listId !== trackQueue[0].listId))
+  ) {
     return (
       <div className="flex flex-col gap-2">
         {[0, 1, 2, 3, 4, 5, 6, 7].map((_, index) => (
