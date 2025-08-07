@@ -1,6 +1,6 @@
 import { MixContent } from "../../types";
 
-export default function extractAllAlbum(listAlbumData: any): {
+export default function extractArtistAllAlbum(listAlbumData: any): {
   title: string;
   contents: MixContent["contents"];
   continuation: string;
